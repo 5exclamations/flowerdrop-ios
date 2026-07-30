@@ -7,9 +7,13 @@ struct BouquetPhoto: View {
     let url: URL
     var parallax = true
 
-    /// Перелёт карточки на экран букета пересоздаёт вью и отменяет загрузку —
-    /// без повтора вместо фотографии навсегда оставалась бы заглушка.
+    /// Переходы между экранами пересоздают вью и отменяют загрузку.
+    /// После `maxAttempts` показываем заглушку, но попытки не прекращаем:
+    /// иначе исчерпанный счётчик оставлял бы заглушку навсегда — вкладки
+    /// живут в памяти, и состояние вью не сбрасывается.
     private static let maxAttempts = 3
+    private static let baseRetryDelay: TimeInterval = 0.6
+    private static let maxRetryDelay: TimeInterval = 5
 
     @State private var attempt = 0
 
@@ -45,16 +49,21 @@ struct BouquetPhoto: View {
             }
     }
 
-    @ViewBuilder
     private var retryOrFail: some View {
-        if attempt < Self.maxAttempts {
-            SkeletonView()
-                .task {
-                    try? await Task.sleep(for: .milliseconds(400))
-                    attempt += 1
-                }
-        } else {
-            unavailable
+        Group {
+            if attempt < Self.maxAttempts {
+                SkeletonView()
+            } else {
+                unavailable
+            }
+        }
+        .task(id: attempt) {
+            let delay = min(
+                Self.baseRetryDelay * pow(2, Double(min(attempt, 4))),
+                Self.maxRetryDelay
+            )
+            try? await Task.sleep(for: .seconds(delay))
+            attempt += 1
         }
     }
 
@@ -70,13 +79,15 @@ struct BouquetPhoto: View {
         return -progress * DS.Motion.parallaxDepth
     }
 
+    /// Спокойная заглушка вместо «сломанной камеры»: в витрине букетов
+    /// иконка ошибки пугает сильнее, чем отсутствующее фото.
     private var unavailable: some View {
         DS.Palette.textSecondary
             .opacity(DS.Opacity.subtle)
             .overlay {
-                Image(systemName: "camera.metering.unknown")
+                Image(systemName: "leaf")
                     .font(DS.Typography.title)
-                    .foregroundStyle(DS.Palette.textSecondary)
+                    .foregroundStyle(DS.Palette.textSecondary.opacity(DS.Opacity.strong))
             }
     }
 }

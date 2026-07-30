@@ -6,15 +6,16 @@ struct PhotoPriceLabel: View {
     var compact = false
 
     var body: some View {
+        // Порядок тот же, что в PriceTag: сначала старая цена, потом новая.
         HStack(alignment: .firstTextBaseline, spacing: DS.Spacing.xs) {
-            Text(verbatim: DS.Format.price(bouquet.discountedPrice))
-                .font(compact ? DS.Typography.priceCompact : DS.Typography.price)
-                .foregroundStyle(DS.Palette.onPhoto)
-
             Text(verbatim: DS.Format.price(bouquet.originalPrice))
                 .font(DS.Typography.priceStruck)
                 .strikethrough()
                 .foregroundStyle(DS.Palette.onPhoto.opacity(DS.Opacity.strong))
+
+            Text(verbatim: DS.Format.price(bouquet.discountedPrice))
+                .font(compact ? DS.Typography.priceCompact : DS.Typography.price)
+                .foregroundStyle(DS.Palette.onPhoto)
         }
         .accessibilityElement(children: .combine)
     }

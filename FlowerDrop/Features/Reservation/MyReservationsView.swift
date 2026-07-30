@@ -10,7 +10,6 @@ struct MyReservationsView: View {
                 Text("Мои резервы")
                     .font(DS.Typography.display)
                     .foregroundStyle(DS.Palette.textPrimary)
-                    .padding(.top, DS.Spacing.xs)
 
                 if store.reservations.isEmpty {
                     emptyState
@@ -24,6 +23,7 @@ struct MyReservationsView: View {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, DS.Spacing.m)
+            .padding(.top, DS.Spacing.xs)
             .padding(.bottom, DS.Spacing.xl)
         }
         .background(DS.Palette.bg)

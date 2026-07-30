@@ -41,7 +41,7 @@ struct PhoneEntryView: View {
             Spacer()
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(DS.Spacing.m)
+        .padding(.horizontal, DS.Spacing.m)
         .background(alignment: .topLeading) { hiddenField }
         .task { isFocused = true }
     }
@@ -77,12 +77,15 @@ struct PhoneEntryView: View {
     }
 
     /// Поле невидимо, но именно оно держит фокус и клавиатуру.
+    /// Прячем размером и обрезкой, а не прозрачностью: значений opacity
+    /// в системе ровно три, и нулю среди них места нет.
     private var hiddenField: some View {
         TextField(text: input) { EmptyView() }
             .keyboardType(.numberPad)
             .textContentType(.telephoneNumber)
             .focused($isFocused)
-            .frame(width: DS.Size.hairline, height: DS.Size.hairline)
-            .opacity(0)
+            .frame(width: 0, height: 0)
+            .clipped()
+            .accessibilityHidden(true)
     }
 }

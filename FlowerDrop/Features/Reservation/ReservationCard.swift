@@ -2,55 +2,33 @@ import SwiftUI
 
 /// Карточка резерва: мини-фото, лавка, код получения и живой отсчёт
 /// до истечения брони.
+///
+/// `TimelineView` обёрнут только вокруг строки отсчёта. Когда он охватывал
+/// всю карточку, ежесекундная перерисовка отменяла загрузку фотографии,
+/// и вместо неё оставалась заглушка.
 struct ReservationCard: View {
     let reservation: ReservationStore.Reservation
     let onPickedUp: () -> Void
 
+    private var status: ReservationStore.Status {
+        reservation.status()
+    }
+
     var body: some View {
-        TimelineView(.periodic(from: .now, by: 1)) { context in
-            let status = reservation.status(at: context.date)
-
-            VStack(alignment: .leading, spacing: DS.Spacing.s) {
-                HStack(alignment: .top, spacing: DS.Spacing.s) {
-                    thumbnail
-
-                    VStack(alignment: .leading, spacing: DS.Spacing.xxs) {
-                        Text(verbatim: reservation.bouquet.shopName)
-                            .font(DS.Typography.bodyEmphasized)
-                            .foregroundStyle(DS.Palette.textPrimary)
-                            .lineLimit(1)
-
-                        Text(verbatim: reservation.bouquet.title)
-                            .font(DS.Typography.caption)
-                            .foregroundStyle(DS.Palette.textSecondary)
-                            .lineLimit(1)
-
-                        statusLine(status, now: context.date)
-                    }
-
-                    Spacer(minLength: DS.Spacing.xs)
-
-                    code(status)
-                }
-
-                if status == .active {
-                    Button(action: onPickedUp) {
-                        Text("Забрал")
-                            .font(DS.Typography.bodyEmphasized)
-                            .foregroundStyle(DS.Palette.accent)
-                            .frame(maxWidth: .infinity)
-                            .frame(minHeight: DS.Size.minTapTarget)
-                            .background(
-                                DS.Palette.accent.opacity(DS.Opacity.subtle),
-                                in: DS.Radius.shape
-                            )
-                    }
-                    .buttonStyle(.pressable)
-                }
+        VStack(alignment: .leading, spacing: DS.Spacing.s) {
+            HStack(alignment: .top, spacing: DS.Spacing.s) {
+                thumbnail
+                details
+                Spacer(minLength: DS.Spacing.xs)
+                code
             }
-            .dsCard()
-            .opacity(status == .expired ? DS.Opacity.strong : 1)
+
+            if status == .active {
+                pickedUpButton
+            }
         }
+        .dsCard()
+        .opacity(status == .expired ? DS.Opacity.strong : 1)
     }
 
     private var thumbnail: some View {
@@ -59,7 +37,25 @@ struct ReservationCard: View {
             .clipShape(DS.Radius.shape)
     }
 
-    private func code(_ status: ReservationStore.Status) -> some View {
+    private var details: some View {
+        VStack(alignment: .leading, spacing: DS.Spacing.xxs) {
+            Text(verbatim: reservation.bouquet.shopName)
+                .font(DS.Typography.bodyEmphasized)
+                .foregroundStyle(DS.Palette.textPrimary)
+                .lineLimit(1)
+
+            Text(verbatim: reservation.bouquet.title)
+                .font(DS.Typography.caption)
+                .foregroundStyle(DS.Palette.textSecondary)
+                .lineLimit(1)
+
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                statusLine(reservation.status(at: context.date), now: context.date)
+            }
+        }
+    }
+
+    private var code: some View {
         VStack(alignment: .trailing, spacing: DS.Spacing.xxs) {
             Text("Код")
                 .font(DS.Typography.caption)
@@ -71,6 +67,21 @@ struct ReservationCard: View {
                 .strikethrough(status == .expired)
         }
         .accessibilityElement(children: .combine)
+    }
+
+    private var pickedUpButton: some View {
+        Button(action: onPickedUp) {
+            Text("Забрал")
+                .font(DS.Typography.bodyEmphasized)
+                .foregroundStyle(DS.Palette.accent)
+                .frame(maxWidth: .infinity)
+                .frame(minHeight: DS.Size.minTapTarget)
+                .background(
+                    DS.Palette.accent.opacity(DS.Opacity.subtle),
+                    in: DS.Radius.shape
+                )
+        }
+        .buttonStyle(.pressable)
     }
 
     @ViewBuilder

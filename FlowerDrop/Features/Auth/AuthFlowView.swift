@@ -15,15 +15,22 @@ struct AuthFlowView: View {
     }
 
     var body: some View {
-        ZStack(alignment: .topTrailing) {
+        ZStack {
             DS.Palette.bg
                 .ignoresSafeArea()
 
-            content
-                .padding(.top, DS.Spacing.xl)
+            // Кнопка закрытия — отдельной строкой, а не оверлеем:
+            // так заголовок стартует на той же высоте, что на остальных экранах.
+            VStack(alignment: .leading, spacing: DS.Spacing.m) {
+                HStack {
+                    Spacer(minLength: 0)
+                    closeButton
+                }
+                .padding(.horizontal, DS.Spacing.m)
 
-            closeButton
-                .padding(DS.Spacing.m)
+                content
+            }
+            .padding(.top, DS.Spacing.xs)
         }
     }
 

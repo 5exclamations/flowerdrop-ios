@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Единственный источник визуальных токенов приложения.
 /// Магические значения во вьюхах запрещены — всё берётся отсюда.
@@ -68,27 +69,50 @@ enum DS {
     // MARK: - Типографика
 
     /// Заголовки — serif semibold, остальное SF Pro, шкала 34/22/17/15/13.
+    ///
+    /// Размеры фиксированы дизайном, но обязаны тянуться за Dynamic Type,
+    /// поэтому каждый прогоняется через `UIFontMetrics`. `Font.system(size:)`
+    /// на настройки размера текста не реагирует вовсе.
+    /// Свойства вычисляемые: иначе шкала застыла бы на значении при старте.
     enum Typography {
-        static let display = Font.system(size: 34, weight: .semibold, design: .serif)
-        static let title = Font.system(size: 22, weight: .semibold, design: .serif)
-        static let body = Font.system(size: 17)
-        static let bodyEmphasized = Font.system(size: 17, weight: .semibold)
-        static let callout = Font.system(size: 15)
-        static let caption = Font.system(size: 13)
-        static let eyebrow = Font.system(size: 13, weight: .semibold)
+        static var display: Font { scaled(34, .semibold, serif: true, relativeTo: .largeTitle) }
+        static var title: Font { scaled(22, .semibold, serif: true, relativeTo: .title2) }
+        static var body: Font { scaled(17, .regular, relativeTo: .body) }
+        static var bodyEmphasized: Font { scaled(17, .semibold, relativeTo: .body) }
+        static var callout: Font { scaled(15, .regular, relativeTo: .subheadline) }
+        static var caption: Font { scaled(13, .regular, relativeTo: .footnote) }
+        static var eyebrow: Font { scaled(13, .semibold, relativeTo: .footnote) }
         static let eyebrowKerning: CGFloat = 1.2
         /// Нижняя граница автоуменьшения текста в тесных ячейках.
         static let minimumScale: CGFloat = 0.8
 
-        /// Цены — моноширинные цифры, чтобы не «прыгали» при обновлении.
         /// Код получения резерва — крупно, серифом, с разрядкой.
-        static let code = Font.system(size: 34, weight: .semibold, design: .serif).monospacedDigit()
+        static var code: Font {
+            scaled(34, .semibold, serif: true, relativeTo: .largeTitle).monospacedDigit()
+        }
         static let codeKerning: CGFloat = 8
 
-        static let price = Font.system(size: 22, weight: .semibold).monospacedDigit()
-        static let priceCompact = Font.system(size: 17, weight: .semibold).monospacedDigit()
-        static let priceStruck = Font.system(size: 15).monospacedDigit()
-        static let badge = Font.system(size: 13, weight: .semibold).monospacedDigit()
+        /// Цены — моноширинные цифры, чтобы не «прыгали» при обновлении.
+        static var price: Font { scaled(22, .semibold, relativeTo: .title2).monospacedDigit() }
+        static var priceCompact: Font { scaled(17, .semibold, relativeTo: .body).monospacedDigit() }
+        static var priceStruck: Font { scaled(15, .regular, relativeTo: .subheadline).monospacedDigit() }
+        static var badge: Font { scaled(13, .semibold, relativeTo: .footnote).monospacedDigit() }
+
+        private static func scaled(
+            _ size: CGFloat,
+            _ weight: UIFont.Weight,
+            serif: Bool = false,
+            relativeTo style: UIFont.TextStyle
+        ) -> Font {
+            let base = UIFont.systemFont(ofSize: size, weight: weight)
+            let resolved: UIFont
+            if serif, let descriptor = base.fontDescriptor.withDesign(.serif) {
+                resolved = UIFont(descriptor: descriptor, size: size)
+            } else {
+                resolved = base
+            }
+            return Font(UIFontMetrics(forTextStyle: style).scaledFont(for: resolved))
+        }
     }
 
     // MARK: - Движение
