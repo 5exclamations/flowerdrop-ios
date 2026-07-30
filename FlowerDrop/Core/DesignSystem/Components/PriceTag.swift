@@ -1,16 +1,11 @@
 import SwiftUI
 
 /// Цена букета: старая зачёркнута, новая крупная, рядом бейдж со скидкой.
-/// Процент считается из цен, а не передаётся руками.
+/// Процент приходит с сервера — клиент его не пересчитывает.
 struct PriceTag: View {
     let original: Decimal
     let current: Decimal
-
-    private var discountPercent: Int {
-        guard original > 0, current < original else { return 0 }
-        let ratio = (original - current) / original
-        return Int((NSDecimalNumber(decimal: ratio).doubleValue * 100).rounded())
-    }
+    let discountPercent: Int
 
     var body: some View {
         HStack(alignment: .firstTextBaseline, spacing: DS.Spacing.xs) {
@@ -47,8 +42,8 @@ struct DiscountBadge: View {
 
 #Preview {
     VStack(alignment: .leading, spacing: DS.Spacing.m) {
-        PriceTag(original: 60, current: 30)
-        PriceTag(original: 125.5, current: 62.75)
+        PriceTag(original: 60, current: 30, discountPercent: 50)
+        PriceTag(original: 125.5, current: 62.75, discountPercent: 50)
     }
     .padding(DS.Spacing.m)
     .background(DS.Palette.bg)

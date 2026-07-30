@@ -4,7 +4,8 @@ import SwiftUI
 /// Пока грузится, на его месте живёт скелетон того же размера,
 /// поэтому лента не дёргается при появлении картинок.
 struct BouquetPhoto: View {
-    let url: URL
+    /// `nil` — лавка опубликовала букет без фотографии.
+    let url: URL?
     var parallax = true
 
     /// Переходы между экранами пересоздают вью и отменяют загрузку.
@@ -21,20 +22,24 @@ struct BouquetPhoto: View {
         Color.clear
             .aspectRatio(DS.Size.photoAspectRatio, contentMode: .fit)
             .overlay {
-                AsyncImage(
-                    url: url,
-                    transaction: Transaction(animation: DS.Motion.spring)
-                ) { phase in
-                    switch phase {
-                    case .success(let image):
-                        photo(image)
-                    case .failure:
-                        retryOrFail
-                    default:
-                        SkeletonView()
+                if let url {
+                    AsyncImage(
+                        url: url,
+                        transaction: Transaction(animation: DS.Motion.spring)
+                    ) { phase in
+                        switch phase {
+                        case .success(let image):
+                            photo(image)
+                        case .failure:
+                            retryOrFail
+                        default:
+                            SkeletonView()
+                        }
                     }
+                    .id(attempt)
+                } else {
+                    unavailable
                 }
-                .id(attempt)
             }
             .clipped()
     }

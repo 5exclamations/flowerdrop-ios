@@ -1,141 +1,41 @@
-import Foundation
+import SwiftUI
 
-/// Контракт бэкенда. Django REST появится позже — вьюмодели уже сейчас
-/// работают только через этот протокол.
-protocol APIClient: Sendable {
-    func bouquets() async throws -> [Bouquet]
+/// Ответ на запрос кода: сервер нормализует номер и говорит, сколько
+/// код живёт. `debugCode` приходит только из dev-сборки бэкенда.
+struct OTPChallenge: Hashable {
+    let phone: String
+    let expiresIn: Int
+    let debugCode: String?
 }
 
-/// Моки на время, пока бэкенда нет.
-/// Фотографии — реальные URL Pexels, каждый проверен на отдачу image/jpeg.
-struct MockAPIClient: APIClient {
+/// Успешный вход: токен и профиль.
+struct AuthSession: Hashable {
+    let token: String
+    let phone: String
+}
 
-    /// Задержка, чтобы скелетоны были не декорацией, а рабочим состоянием.
-    var latency: Duration = .milliseconds(1500)
+/// Контракт бэкенда. Экраны знают только его — за ним стоит либо сеть,
+/// либо моки для превью.
+protocol APIClient: Sendable {
+    func bouquets() async throws -> [Bouquet]
+    func bouquet(id: Int) async throws -> Bouquet
 
-    func bouquets() async throws -> [Bouquet] {
-        try await Task.sleep(for: latency)
-        return Self.catalogue
+    func requestCode(phone: String) async throws -> OTPChallenge
+    func verifyCode(phone: String, code: String) async throws -> AuthSession
+
+    func reservations(token: String) async throws -> [Reservation]
+    func reserve(bouquetID: Int, token: String) async throws -> Reservation
+    func pickup(reservationID: Int, token: String) async throws -> Reservation
+}
+
+private struct APIClientKey: EnvironmentKey {
+    /// Превью и канвас работают на моках — без сети и без бэкенда.
+    static let defaultValue: any APIClient = MockAPIClient()
+}
+
+extension EnvironmentValues {
+    var apiClient: any APIClient {
+        get { self[APIClientKey.self] }
+        set { self[APIClientKey.self] = newValue }
     }
-
-    private static func photo(_ id: Int) -> URL {
-        URL(string: "https://images.pexels.com/photos/\(id)/pexels-photo-\(id).jpeg?auto=compress&cs=tinysrgb&w=900")!
-    }
-
-    /// Сегодня в 21:00 — единое окно самовывоза для всех лавок.
-    private static var pickupUntil: Date {
-        Calendar.current.date(
-            bySettingHour: 21,
-            minute: 0,
-            second: 0,
-            of: Date()
-        ) ?? Date()
-    }
-
-    private static let catalogue: [Bouquet] = [
-        Bouquet(
-            id: UUID(uuidString: "A1000000-0000-0000-0000-000000000001")!,
-            title: "Тюльпаны в крафте",
-            summary: "Двадцать пять тюльпанов в крафтовой бумаге. Собрали вчера утром, ночь простояли в холодильнике.",
-            shopName: "Bakı Buket",
-            shopAddress: "ул. Низами, 28",
-            imageURL: photo(36945270),
-            originalPrice: 44,
-            discountedPrice: 22,
-            pickupUntil: pickupUntil,
-            quantityLeft: 2,
-            distance: Measurement(value: 0.4, unit: .kilometers)
-        ),
-        Bouquet(
-            id: UUID(uuidString: "A1000000-0000-0000-0000-000000000002")!,
-            title: "Розы и подсолнух",
-            summary: "Оранжевые розы, подсолнух и хризантема. В прохладной воде простоит ещё неделю.",
-            shopName: "Gül Evi",
-            shopAddress: "пр. Нефтяников, 14",
-            imageURL: photo(37222812),
-            originalPrice: 58,
-            discountedPrice: 29,
-            pickupUntil: pickupUntil,
-            quantityLeft: 1,
-            distance: Measurement(value: 1.2, unit: .kilometers)
-        ),
-        Bouquet(
-            id: UUID(uuidString: "A1000000-0000-0000-0000-000000000003")!,
-            title: "Тюльпаны в бордо",
-            summary: "Розовые тюльпаны в бордовой бумаге. Простой букет на каждый день, без лишнего декора.",
-            shopName: "Nərgiz Çiçək",
-            shopAddress: "ул. Ази Асланова, 7",
-            imageURL: photo(7311450),
-            originalPrice: 30,
-            discountedPrice: 15,
-            pickupUntil: pickupUntil,
-            quantityLeft: 3,
-            distance: Measurement(value: 0.8, unit: .kilometers)
-        ),
-        Bouquet(
-            id: UUID(uuidString: "A1000000-0000-0000-0000-000000000004")!,
-            title: "Кустовые розы",
-            summary: "Пастельные кустовые розы с эвкалиптом. Мелкие бутоны раскроются за пару дней.",
-            shopName: "Lalə Studio",
-            shopAddress: "ул. Ахмеда Джавада, 3",
-            imageURL: photo(20295105),
-            originalPrice: 36,
-            discountedPrice: 18,
-            pickupUntil: pickupUntil,
-            quantityLeft: 2,
-            distance: Measurement(value: 1.7, unit: .kilometers)
-        ),
-        Bouquet(
-            id: UUID(uuidString: "A1000000-0000-0000-0000-000000000005")!,
-            title: "Летний микс",
-            summary: "Сборный букет из того, что осталось к вечеру: хризантемы, альстромерии и зелень.",
-            shopName: "Səhər Gülləri",
-            shopAddress: "ул. Шарифзаде, 41",
-            imageURL: photo(20617542),
-            originalPrice: 24,
-            discountedPrice: 12,
-            pickupUntil: pickupUntil,
-            quantityLeft: 1,
-            distance: Measurement(value: 2.3, unit: .kilometers)
-        ),
-        Bouquet(
-            id: UUID(uuidString: "A1000000-0000-0000-0000-000000000006")!,
-            title: "Ранункулюсы",
-            summary: "Коралловые ранункулюсы в матовой плёнке. Бутоны раскроются полностью на второй день.",
-            shopName: "İçərişəhər Flora",
-            shopAddress: "ул. Кичик Гала, 12",
-            imageURL: photo(20704831),
-            originalPrice: 50,
-            discountedPrice: 25,
-            pickupUntil: pickupUntil,
-            quantityLeft: 2,
-            distance: Measurement(value: 0.3, unit: .kilometers)
-        ),
-        Bouquet(
-            id: UUID(uuidString: "A1000000-0000-0000-0000-000000000007")!,
-            title: "Пионы кораллом",
-            summary: "Пионовидные розы кораллового оттенка. Крупные бутоны, плотная упаковка в два слоя.",
-            shopName: "Fəvvarə Çiçək",
-            shopAddress: "ул. Расула Рзы, 9",
-            imageURL: photo(5656731),
-            originalPrice: 60,
-            discountedPrice: 30,
-            pickupUntil: pickupUntil,
-            quantityLeft: 1,
-            distance: Measurement(value: 3.6, unit: .kilometers)
-        ),
-        Bouquet(
-            id: UUID(uuidString: "A1000000-0000-0000-0000-000000000008")!,
-            title: "Анемоны и рускус",
-            summary: "Фиолетовые анемоны с рускусом в зелёной бумаге. Небольшой букет для рабочего стола.",
-            shopName: "Nizami Gül Bazar",
-            shopAddress: "ул. Тарлана Алиярбекова, 22",
-            imageURL: photo(23094210),
-            originalPrice: 18,
-            discountedPrice: 9,
-            pickupUntil: pickupUntil,
-            quantityLeft: 3,
-            distance: Measurement(value: 2.9, unit: .kilometers)
-        )
-    ]
 }

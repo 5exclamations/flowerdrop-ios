@@ -19,6 +19,9 @@ targets:
     deploymentTarget: "17.0"
     sources:
       - path: FlowerDrop
+        excludes:
+          - "Info.plist"
+          - "Info-Debug.plist"
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.texa.flowerdrop
@@ -27,8 +30,10 @@ targets:
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
         INFOPLIST_KEY_UISupportedInterfaceOrientations: UIInterfaceOrientationPortrait
         ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS: YES
-    info:
-      path: FlowerDrop/Info.plist
-      properties:
-        UILaunchScreen: {}
-        CFBundleLocalizations: [ru, az]
+      configs:
+        # Адрес бэкенда и ATS-исключение задаёт конфигурация, а не код.
+        # Debug смотрит на localhost по HTTP, Release — только HTTPS.
+        Debug:
+          INFOPLIST_FILE: FlowerDrop/Info-Debug.plist
+        Release:
+          INFOPLIST_FILE: FlowerDrop/Info.plist

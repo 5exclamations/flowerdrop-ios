@@ -1,8 +1,9 @@
 import SwiftUI
 
-/// Вкладка «Мои резервы»: активные брони сверху, истёкшие и полученные ниже.
+/// Вкладка «Мои резервы»: список приходит с сервера, он же гасит просроченные.
 struct MyReservationsView: View {
     @Environment(ReservationStore.self) private var store
+    @Environment(AuthStore.self) private var auth
 
     var body: some View {
         ScrollView {
@@ -11,15 +12,7 @@ struct MyReservationsView: View {
                     .font(DS.Typography.display)
                     .foregroundStyle(DS.Palette.textPrimary)
 
-                if store.reservations.isEmpty {
-                    emptyState
-                } else {
-                    ForEach(store.sortedReservations) { reservation in
-                        ReservationCard(reservation: reservation) {
-                            store.markPickedUp(reservation.id)
-                        }
-                    }
-                }
+                content
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .padding(.horizontal, DS.Spacing.m)
@@ -28,14 +21,59 @@ struct MyReservationsView: View {
         }
         .background(DS.Palette.bg)
         .scrollIndicators(.hidden)
-        .animation(DS.Motion.spring, value: store.reservations)
+        .refreshable { await store.refresh() }
+        .task { await store.load() }
+        .animation(DS.Motion.spring, value: store.state)
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch store.state {
+        case .loading:
+            skeletons
+        case .loaded(let items):
+            ForEach(items) { reservation in
+                ReservationCard(reservation: reservation) {
+                    Task { await store.pickup(reservation) }
+                }
+            }
+        case .empty:
+            emptyState
+        case .failed(let retryable):
+            failedState(retryable: retryable)
+        }
+    }
+
+    private var skeletons: some View {
+        VStack(spacing: DS.Spacing.m) {
+            ForEach(0..<2, id: \.self) { _ in
+                SkeletonView()
+                    .frame(height: DS.Size.thumbnail + DS.Spacing.xl)
+            }
+        }
     }
 
     private var emptyState: some View {
         FeedPlaceholder(
             systemImage: "basket",
-            title: "Пока нет резервов",
-            message: "Зарезервируй букет — он появится здесь вместе с кодом получения."
+            title: auth.isSignedIn ? "Пока нет резервов" : "Резервы после входа",
+            message: auth.isSignedIn
+                ? "Зарезервируй букет — он появится здесь вместе с кодом получения."
+                : "Выбери букет в ленте — войти попросим на резерве."
         )
+    }
+
+    private func failedState(retryable: Bool) -> some View {
+        FeedPlaceholder(
+            systemImage: "wifi.exclamationmark",
+            title: "Резервы не загрузились",
+            message: "Проверь соединение и попробуй ещё раз."
+        ) {
+            if retryable {
+                PrimaryButton("Повторить", systemImage: "arrow.clockwise") {
+                    Task { await store.load() }
+                }
+            }
+        }
     }
 }

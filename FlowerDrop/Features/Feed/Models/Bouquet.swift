@@ -1,33 +1,38 @@
 import Foundation
 
-/// «Вчерашний» букет: лавка выкладывает его вечером со скидкой -50%.
+/// «Вчерашний» букет: лавка выкладывает его вечером со скидкой.
 struct Bouquet: Identifiable, Hashable {
-    let id: UUID
+    let id: Int
     let title: String
     let summary: String
     let shopName: String
     let shopAddress: String
-    let imageURL: URL
+    /// Пустая строка в `photo_url` означает, что фотографии нет вовсе.
+    let imageURL: URL?
     let originalPrice: Decimal
     let discountedPrice: Decimal
-    /// Конец окна самовывоза — сегодня.
+    /// Считает сервер — клиент не пересчитывает.
+    let discountPercent: Int
     let pickupUntil: Date
     let quantityLeft: Int
-    let distance: Measurement<UnitLength>
+    /// `null`, пока клиент не передаёт координаты.
+    let distance: Measurement<UnitLength>?
 
-    var discountPercent: Int {
-        guard originalPrice > 0, discountedPrice < originalPrice else { return 0 }
-        let ratio = (originalPrice - discountedPrice) / originalPrice
-        return Int((NSDecimalNumber(decimal: ratio).doubleValue * 100).rounded())
+    var isAvailable: Bool {
+        quantityLeft > 0 && pickupUntil > Date()
     }
 
     var pickupUntilText: String {
         pickupUntil.formatted(date: .omitted, time: .shortened)
     }
 
-    var distanceText: String {
-        distance.formatted(
-            .measurement(width: .abbreviated, usage: .road)
-        )
+    var distanceText: String? {
+        distance?.formatted(.measurement(width: .abbreviated, usage: .road))
+    }
+
+    /// Подпись под названием: лавка и, если известно, расстояние.
+    var shopLine: String {
+        guard let distanceText else { return shopName }
+        return "\(shopName) · \(distanceText)"
     }
 }

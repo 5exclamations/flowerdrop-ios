@@ -7,11 +7,11 @@ import SwiftUI
 /// всю карточку, ежесекундная перерисовка отменяла загрузку фотографии,
 /// и вместо неё оставалась заглушка.
 struct ReservationCard: View {
-    let reservation: ReservationStore.Reservation
+    let reservation: Reservation
     let onPickedUp: () -> Void
 
-    private var status: ReservationStore.Status {
-        reservation.status()
+    private var status: Reservation.Status {
+        reservation.status(at: Date())
     }
 
     var body: some View {
@@ -85,7 +85,7 @@ struct ReservationCard: View {
     }
 
     @ViewBuilder
-    private func statusLine(_ status: ReservationStore.Status, now: Date) -> some View {
+    private func statusLine(_ status: Reservation.Status, now: Date) -> some View {
         switch status {
         case .active:
             Label(

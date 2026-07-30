@@ -2,7 +2,7 @@ import SwiftUI
 
 /// Экран успеха: код получения — главный герой экрана.
 struct ReservationSuccessView: View {
-    let reservation: ReservationStore.Reservation
+    let reservation: Reservation
     let onClose: () -> Void
     let onOpenReservations: () -> Void
 

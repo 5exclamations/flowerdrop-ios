@@ -3,6 +3,7 @@ import SwiftUI
 /// Подтверждение резерва: что берём, где забирать и сколько держится бронь.
 struct ReserveConfirmationSheet: View {
     let bouquet: Bouquet
+    let isBusy: Bool
     let onConfirm: () -> Void
 
     var body: some View {
@@ -48,6 +49,7 @@ struct ReserveConfirmationSheet: View {
                 .foregroundStyle(DS.Palette.accentSecondary)
 
             PrimaryButton("Подтвердить резерв", systemImage: "checkmark", action: onConfirm)
+                .disabled(isBusy)
         }
         .padding(DS.Spacing.m)
         .frame(maxWidth: .infinity, alignment: .leading)

@@ -3,35 +3,67 @@ import SwiftUI
 /// Экран букета: фотография во всю ширину под статусбаром,
 /// факты о букете и закреплённая снизу кнопка резерва.
 struct BouquetDetailView: View {
-    let bouquet: Bouquet
     let namespace: Namespace.ID
+    let corrections: FeedCorrections
     let onClose: () -> Void
     let onShowReservations: () -> Void
 
-    @Environment(ReservationStore.self) private var store
+    @Environment(\.apiClient) private var client
+    @Environment(ReservationStore.self) private var reservations
     @Environment(AuthStore.self) private var auth
 
+    /// Своя копия: после проигранной гонки перечитываем букет с сервера.
+    @State private var bouquet: Bouquet
     @State private var isConfirming = false
-    @State private var pendingReservation: ReservationStore.Reservation?
+    @State private var isReserving = false
+    @State private var pendingReservation: Reservation?
     @State private var presented: Presentation?
     @State private var confirmAfterAuth = false
+    @State private var alert: ReserveAlert?
+
+    init(
+        bouquet: Bouquet,
+        namespace: Namespace.ID,
+        corrections: FeedCorrections,
+        onClose: @escaping () -> Void,
+        onShowReservations: @escaping () -> Void
+    ) {
+        _bouquet = State(initialValue: bouquet)
+        self.namespace = namespace
+        self.corrections = corrections
+        self.onClose = onClose
+        self.onShowReservations = onShowReservations
+    }
 
     /// Полноэкранных презентаций на вью может быть только одна,
     /// поэтому вход и успех живут в общем перечислении.
     private enum Presentation: Identifiable {
         case auth
-        case success(ReservationStore.Reservation)
+        case success(Reservation)
 
         var id: String {
             switch self {
             case .auth: "auth"
-            case .success(let reservation): reservation.id.uuidString
+            case .success(let reservation): "success-\(reservation.id)"
             }
         }
     }
 
-    private var remaining: Int {
-        store.remaining(for: bouquet)
+    private enum ReserveAlert: Identifiable {
+        /// 409 bouquet_unavailable — лента протухла.
+        case soldOut
+        /// 409 already_reserved.
+        case alreadyMine
+        /// Сеть или сервер — можно просто попробовать снова.
+        case failed
+
+        var id: String {
+            switch self {
+            case .soldOut: "soldOut"
+            case .alreadyMine: "alreadyMine"
+            case .failed: "failed"
+            }
+        }
     }
 
     var body: some View {
@@ -46,9 +78,8 @@ struct BouquetDetailView: View {
         }
         .safeAreaInset(edge: .bottom) { reserveBar }
         .sheet(isPresented: $isConfirming, onDismiss: presentSuccessIfReserved) {
-            ReserveConfirmationSheet(bouquet: bouquet) {
-                pendingReservation = store.reserve(bouquet)
-                isConfirming = false
+            ReserveConfirmationSheet(bouquet: bouquet, isBusy: isReserving) {
+                Task { await confirmReservation() }
             }
         }
         .fullScreenCover(item: $presented, onDismiss: continueAfterAuth) { presentation in
@@ -64,6 +95,28 @@ struct BouquetDetailView: View {
                 }
             }
         }
+        .alert(item: $alert) { alert in
+            switch alert {
+            case .soldOut:
+                Alert(
+                    title: Text("Только что разобрали"),
+                    message: Text("Кто-то успел раньше. Мы обновили ленту."),
+                    dismissButton: .default(Text("Понятно"))
+                )
+            case .alreadyMine:
+                Alert(
+                    title: Text("Этот букет уже у вас"),
+                    message: Text("Код получения ждёт в «Моих резервах»."),
+                    dismissButton: .default(Text("Понятно"))
+                )
+            case .failed:
+                Alert(
+                    title: Text("Не получилось зарезервировать"),
+                    message: Text("Проверь соединение и попробуй ещё раз."),
+                    dismissButton: .default(Text("Понятно"))
+                )
+            }
+        }
     }
 
     // MARK: - Сценарий резерва
@@ -75,6 +128,48 @@ struct BouquetDetailView: View {
             return
         }
         isConfirming = true
+    }
+
+    private func confirmReservation() async {
+        isReserving = true
+        defer { isReserving = false }
+
+        do {
+            pendingReservation = try await reservations.reserve(bouquet)
+            isConfirming = false
+        } catch let error as APIError {
+            isConfirming = false
+            await handle(error)
+        } catch {
+            isConfirming = false
+            alert = .failed
+        }
+    }
+
+    /// Разбор по контракту: 404 и 409 — разные случаи.
+    private func handle(_ error: APIError) async {
+        switch error {
+        case .notFound:
+            corrections.remove(bouquet.id)
+        case .bouquetUnavailable:
+            await refreshBouquet()
+            alert = .soldOut
+        case .alreadyReserved:
+            alert = .alreadyMine
+        case .notAuthenticated:
+            auth.signOut()
+            confirmAfterAuth = true
+            presented = .auth
+        default:
+            alert = .failed
+        }
+    }
+
+    /// Тянем свежий букет и чиним и экран, и карточку в ленте.
+    private func refreshBouquet() async {
+        guard let fresh = try? await client.bouquet(id: bouquet.id) else { return }
+        bouquet = fresh
+        corrections.replace(fresh)
     }
 
     /// После входа сразу продолжаем резерв — пользователь нажимал именно его.
@@ -119,7 +214,7 @@ struct BouquetDetailView: View {
                     .font(DS.Typography.display)
                     .foregroundStyle(DS.Palette.textPrimary)
 
-                Text(verbatim: "\(bouquet.shopName) · \(bouquet.distanceText)")
+                Text(verbatim: bouquet.shopLine)
                     .font(DS.Typography.callout)
                     .foregroundStyle(DS.Palette.textSecondary)
             }
@@ -130,10 +225,14 @@ struct BouquetDetailView: View {
                     title: "до \(bouquet.pickupUntilText)",
                     isAccented: true
                 )
-                InfoChip(systemImage: "basket", title: "осталось \(remaining)")
+                InfoChip(systemImage: "basket", title: "осталось \(bouquet.quantityLeft)")
             }
 
-            PriceTag(original: bouquet.originalPrice, current: bouquet.discountedPrice)
+            PriceTag(
+                original: bouquet.originalPrice,
+                current: bouquet.discountedPrice,
+                discountPercent: bouquet.discountPercent
+            )
 
             Text(bouquet.summary)
                 .font(DS.Typography.body)
@@ -160,11 +259,11 @@ struct BouquetDetailView: View {
 
     private var reserveBar: some View {
         PrimaryButton(
-            remaining > 0 ? "Зарезервировать" : "Разобрали",
-            systemImage: remaining > 0 ? "basket" : "xmark",
+            bouquet.isAvailable ? "Зарезервировать" : "Разобрали",
+            systemImage: bouquet.isAvailable ? "basket" : "xmark",
             action: reserveTapped
         )
-        .disabled(remaining == 0)
+        .disabled(!bouquet.isAvailable)
         .padding(DS.Spacing.m)
         .background(DS.Palette.surface.ignoresSafeArea(edges: .bottom))
     }

@@ -1,88 +1,75 @@
 import Foundation
 
-/// Резервы живут в памяти до появления бэкенда.
-/// Резерв держится два часа: после этого букет возвращается в остаток сам,
-/// потому что остаток считается из резервов, а не хранится отдельно.
+/// Резервы теперь живут на сервере: он же гасит просроченные и возвращает
+/// остаток в ленту. Клиент ничего не считает сам.
 @MainActor
 @Observable
 final class ReservationStore {
 
-    enum Status {
-        case active
-        case expired
-        case pickedUp
+    enum State: Equatable {
+        case loading
+        case loaded([Reservation])
+        case empty
+        case failed(retryable: Bool)
     }
 
-    struct Reservation: Identifiable, Hashable {
-        let id: UUID
-        let bouquet: Bouquet
-        /// Код получения — его называют в лавке.
-        let code: String
-        let createdAt: Date
-        var pickedUpAt: Date?
+    private(set) var state: State = .loading
 
-        var expiresAt: Date {
-            createdAt.addingTimeInterval(ReservationStore.lifetime)
-        }
+    private let client: any APIClient
+    private let auth: AuthStore
 
-        var expiresAtText: String {
-            expiresAt.formatted(date: .omitted, time: .shortened)
-        }
-
-        func status(at moment: Date = Date()) -> Status {
-            if pickedUpAt != nil { return .pickedUp }
-            return moment < expiresAt ? .active : .expired
-        }
-
-        /// Сколько осталось до истечения на указанный момент.
-        func timeLeft(at moment: Date) -> Duration {
-            .seconds(max(0, expiresAt.timeIntervalSince(moment)))
-        }
+    init(client: any APIClient, auth: AuthStore) {
+        self.client = client
+        self.auth = auth
     }
 
-    /// Два часа. Константа нужна и вне главного актора — из `Reservation`.
-    nonisolated static let lifetime: TimeInterval = 2 * 60 * 60
-
-    private(set) var reservations: [Reservation] = []
-
-    /// Свежие сверху, истёкшие в конце.
-    var sortedReservations: [Reservation] {
-        reservations.sorted { left, right in
-            let leftActive = left.status() == .active
-            let rightActive = right.status() == .active
-            if leftActive != rightActive { return leftActive }
-            return left.createdAt > right.createdAt
-        }
+    func load() async {
+        state = .loading
+        await fetch()
     }
 
-    /// Остаток с учётом брони. Истёкшие резервы букет освобождают,
-    /// полученные — нет.
-    func remaining(for bouquet: Bouquet) -> Int {
-        let taken = reservations
-            .filter { $0.bouquet.id == bouquet.id && $0.status() != .expired }
-            .count
-        return max(0, bouquet.quantityLeft - taken)
+    func refresh() async {
+        await fetch()
     }
 
-    @discardableResult
-    func reserve(_ bouquet: Bouquet) -> Reservation {
-        let reservation = Reservation(
-            id: UUID(),
-            bouquet: bouquet,
-            code: Self.makeCode(),
-            createdAt: Date(),
-            pickedUpAt: nil
-        )
-        reservations.append(reservation)
+    /// Бронь. Ошибки контракта пробрасываем наверх — экран букета решает,
+    /// что показать: 409 это «разобрали», 404 — «карточки больше нет».
+    func reserve(_ bouquet: Bouquet) async throws -> Reservation {
+        guard let token = auth.token else { throw APIError.notAuthenticated }
+        let reservation = try await client.reserve(bouquetID: bouquet.id, token: token)
+        await fetch()
         return reservation
     }
 
-    func markPickedUp(_ id: UUID) {
-        guard let index = reservations.firstIndex(where: { $0.id == id }) else { return }
-        reservations[index].pickedUpAt = Date()
+    func pickup(_ reservation: Reservation) async {
+        guard let token = auth.token else { return }
+        do {
+            _ = try await client.pickup(reservationID: reservation.id, token: token)
+        } catch {
+            // Сервер уже мог закрыть бронь сам — просто перечитываем список.
+        }
+        await fetch()
     }
 
-    private static func makeCode() -> String {
-        String(format: "%04d", Int.random(in: 0...9999))
+    private func fetch() async {
+        guard let token = auth.token else {
+            state = .empty
+            return
+        }
+        do {
+            let items = try await client.reservations(token: token)
+            state = items.isEmpty ? .empty : .loaded(items)
+        } catch is CancellationError {
+            // Экран закрыли — молча выходим.
+        } catch let error as APIError {
+            if error == .notAuthenticated {
+                auth.signOut()
+                state = .empty
+            } else {
+                state = .failed(retryable: error.isRetryable)
+            }
+        } catch {
+            state = .failed(retryable: true)
+        }
     }
 }

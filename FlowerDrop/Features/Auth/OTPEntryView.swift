@@ -2,6 +2,7 @@ import SwiftUI
 
 /// Второй шаг входа: код из SMS в четырёх ячейках.
 /// Настоящий ввод идёт в скрытое поле — ячейки только показывают цифры.
+/// Проверяет код сервер: в dev-сборке бэкенда это всегда 1111.
 struct OTPEntryView: View {
     let phone: String
     let onSuccess: () -> Void
@@ -10,7 +11,8 @@ struct OTPEntryView: View {
 
     @State private var code = ""
     @State private var shakes: CGFloat = 0
-    @State private var hasFailed = false
+    @State private var errorText: LocalizedStringKey?
+    @State private var isBusy = false
     @FocusState private var isFocused: Bool
 
     private static let length = 4
@@ -32,8 +34,8 @@ struct OTPEntryView: View {
                 .contentShape(Rectangle())
                 .onTapGesture { isFocused = true }
 
-            if hasFailed {
-                Label("Неверный код", systemImage: "exclamationmark.circle")
+            if let errorText {
+                Label(errorText, systemImage: "exclamationmark.circle")
                     .font(DS.Typography.callout)
                     .foregroundStyle(DS.Palette.accentSecondary)
             }
@@ -82,10 +84,12 @@ struct OTPEntryView: View {
             get: { code },
             set: { newValue in
                 let digits = String(newValue.filter(\.isNumber).prefix(Self.length))
-                guard digits != code else { return }
+                guard digits != code, !isBusy else { return }
                 code = digits
-                hasFailed = false
-                if digits.count == Self.length { verify() }
+                errorText = nil
+                if digits.count == Self.length {
+                    Task { await verify() }
+                }
             }
         )
     }
@@ -96,17 +100,27 @@ struct OTPEntryView: View {
     }
 
     private func border(at index: Int) -> Color {
-        if hasFailed { return DS.Palette.accentSecondary }
+        if errorText != nil { return DS.Palette.accentSecondary }
         return index == code.count ? DS.Palette.accent : .clear
     }
 
-    private func verify() {
-        guard auth.isValid(code: code) else {
-            hasFailed = true
-            code = ""
-            withAnimation(.linear(duration: DS.Motion.shakeDuration)) { shakes += 1 }
-            return
+    private func verify() async {
+        isBusy = true
+        defer { isBusy = false }
+
+        do {
+            try await auth.verify(code: code)
+            onSuccess()
+        } catch let error as APIError {
+            fail(with: error == .otpInvalid ? "Неверный код" : "Не удалось проверить код")
+        } catch {
+            fail(with: "Не удалось проверить код")
         }
-        onSuccess()
+    }
+
+    private func fail(with message: LocalizedStringKey) {
+        errorText = message
+        code = ""
+        withAnimation(.linear(duration: DS.Motion.shakeDuration)) { shakes += 1 }
     }
 }

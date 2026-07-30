@@ -1,10 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-<!-- Release. Никаких исключений ATS: боевой хост только по HTTPS. -->
+<!--
+  Debug. Отличается от релизного plist ровно двумя вещами:
+  адрес бэкенда смотрит на localhost и разрешён HTTP — только для localhost.
+  Релизная сборка этот файл не видит: INFOPLIST_FILE выбирается конфигурацией.
+-->
 <plist version="1.0">
 <dict>
 	<key>APIBaseURL</key>
-	<string>https://api.flowerdrop.az</string>
+	<string>http://localhost:8000</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>localhost</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleExecutable</key>

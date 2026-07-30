@@ -71,6 +71,16 @@
         }
       }
     },
+    "Выбери букет в ленте — войти попросим на резерве.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lentdən buket seç — girişi rezerv zamanı istəyəcəyik."
+          }
+        }
+      }
+    },
     "Дизайн-система": {
       "localizations": {
         "az": {
@@ -221,6 +231,26 @@
         }
       }
     },
+    "Код получения ждёт в «Моих резервах».": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alma kodu «Rezervlərim»də gözləyir."
+          }
+        }
+      }
+    },
+    "Кто-то успел раньше. Мы обновили ленту.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kimsə sizi qabaqladı. Lenti yenilədik."
+          }
+        }
+      }
+    },
     "Лента": {
       "localizations": {
         "az": {
@@ -271,12 +301,52 @@
         }
       }
     },
+    "Не получилось зарезервировать": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezerv etmək alınmadı"
+          }
+        }
+      }
+    },
+    "Не удалось отправить код": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kodu göndərmək alınmadı"
+          }
+        }
+      }
+    },
+    "Не удалось проверить код": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kodu yoxlamaq alınmadı"
+          }
+        }
+      }
+    },
     "Неверный код": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
             "value": "Kod yanlışdır"
+          }
+        }
+      }
+    },
+    "Нет связи с сервером.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serverlə əlaqə yoxdur."
           }
         }
       }
@@ -381,12 +451,32 @@
         }
       }
     },
+    "Понятно": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aydındır"
+          }
+        }
+      }
+    },
     "Пришлём код в SMS — он нужен, чтобы держать резерв за вами.": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
             "value": "SMS-lə kod göndərəcəyik — rezervi sizin üçün saxlamaq lazımdır."
+          }
+        }
+      }
+    },
+    "Проверь номер.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nömrəni yoxla."
           }
         }
       }
@@ -431,12 +521,42 @@
         }
       }
     },
+    "Резервы не загрузились": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezervlər yüklənmədi"
+          }
+        }
+      }
+    },
+    "Резервы после входа": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezervlər girişdən sonra"
+          }
+        }
+      }
+    },
     "Сегодня всё разобрали": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
             "value": "Bu gün hamısı satılıb"
+          }
+        }
+      }
+    },
+    "Сервер ответил ошибкой. Мы уже знаем.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Server xəta qaytardı. Artıq bilirik."
           }
         }
       }
@@ -451,12 +571,32 @@
         }
       }
     },
+    "Слишком часто. Подожди минуту.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çox tez-tez. Bir dəqiqə gözlə."
+          }
+        }
+      }
+    },
     "Типографика": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
             "value": "Tipoqrafiya"
+          }
+        }
+      }
+    },
+    "Только что разобрали": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu dəqiqə satıldı"
           }
         }
       }
@@ -487,6 +627,16 @@
           "stringUnit": {
             "state": "translated",
             "value": "Qiymətlər"
+          }
+        }
+      }
+    },
+    "Этот букет уже у вас": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu buket artıq sizdədir"
           }
         }
       }

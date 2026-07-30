@@ -1,13 +1,15 @@
 import SwiftUI
 
 /// Вход в два шага: номер, затем код. Показываем при первой попытке
-/// зарезервировать букет.
+/// зарезервировать букет. Код проверяет сервер (в dev это всегда 1111).
 struct AuthFlowView: View {
     @Environment(AuthStore.self) private var auth
     @Environment(\.dismiss) private var dismiss
 
     @State private var step: Step = .phone
     @State private var digits = ""
+    @State private var isBusy = false
+    @State private var phoneError: LocalizedStringKey?
 
     private enum Step {
         case phone
@@ -38,17 +40,40 @@ struct AuthFlowView: View {
     private var content: some View {
         switch step {
         case .phone:
-            PhoneEntryView(digits: $digits) {
-                withAnimation(DS.Motion.spring) { step = .code }
+            PhoneEntryView(digits: $digits, isBusy: isBusy, error: phoneError) {
+                Task { await requestCode() }
             }
             .transition(.move(edge: .leading).combined(with: .opacity))
 
         case .code:
             OTPEntryView(phone: "\(AuthStore.countryCode) \(AuthStore.mask(digits))") {
-                auth.signIn(phoneDigits: digits)
                 dismiss()
             }
             .transition(.move(edge: .trailing).combined(with: .opacity))
+        }
+    }
+
+    private func requestCode() async {
+        isBusy = true
+        phoneError = nil
+        defer { isBusy = false }
+
+        do {
+            try await auth.requestCode(phoneDigits: digits)
+            withAnimation(DS.Motion.spring) { step = .code }
+        } catch let error as APIError {
+            phoneError = Self.message(for: error)
+        } catch {
+            phoneError = "Не удалось отправить код"
+        }
+    }
+
+    private static func message(for error: APIError) -> LocalizedStringKey {
+        switch error {
+        case .otpCooldown, .throttled: "Слишком часто. Подожди минуту."
+        case .validation: "Проверь номер."
+        case .unreachable: "Нет связи с сервером."
+        default: "Не удалось отправить код"
         }
     }
 

@@ -1,30 +1,29 @@
 import Foundation
 
-/// Состояние входа. Переживает перезапуск: номер лежит в UserDefaults —
-/// том же хранилище, что и `@AppStorage`.
-///
-/// `@AppStorage` — это `DynamicProperty`, он работает только внутри вью,
-/// поэтому в наблюдаемом сторе используем UserDefaults напрямую.
+/// Состояние входа. Токен лежит в Keychain, номер — в UserDefaults:
+/// номер не секрет, а токен даёт доступ к резервам пользователя.
 @MainActor
 @Observable
 final class AuthStore {
 
-    /// Мок вместо SMS, пока нет бэкенда.
-    nonisolated static let mockCode = "1111"
     /// Азербайджанский номер без кода страны.
     nonisolated static let phoneLength = 9
     nonisolated static let countryCode = "+994"
 
     private enum Key {
         static let phone = "auth.phoneDigits"
+        static let token = "auth.token"
     }
 
+    private let client: any APIClient
     private let defaults: UserDefaults
+    private let keychain: KeychainStore
 
     private(set) var phoneDigits: String
+    private(set) var token: String?
 
     var isSignedIn: Bool {
-        phoneDigits.count == Self.phoneLength
+        token != nil
     }
 
     /// Номер в человеческом виде: +994 XX XXX XX XX.
@@ -32,23 +31,40 @@ final class AuthStore {
         "\(Self.countryCode) \(Self.mask(phoneDigits))"
     }
 
-    init(defaults: UserDefaults = .standard) {
+    init(
+        client: any APIClient,
+        defaults: UserDefaults = .standard,
+        keychain: KeychainStore = KeychainStore()
+    ) {
+        self.client = client
         self.defaults = defaults
+        self.keychain = keychain
         self.phoneDigits = defaults.string(forKey: Key.phone) ?? ""
+        self.token = keychain.string(for: Key.token)
     }
 
-    func signIn(phoneDigits: String) {
+    /// Шаг 1: попросить код. Сервер сам нормализует номер.
+    @discardableResult
+    func requestCode(phoneDigits: String) async throws -> OTPChallenge {
+        let challenge = try await client.requestCode(phone: Self.countryCode + phoneDigits)
         self.phoneDigits = phoneDigits
         defaults.set(phoneDigits, forKey: Key.phone)
+        return challenge
+    }
+
+    /// Шаг 2: обменять код на токен.
+    func verify(code: String) async throws {
+        let session = try await client.verifyCode(
+            phone: Self.countryCode + phoneDigits,
+            code: code
+        )
+        token = session.token
+        keychain.set(session.token, for: Key.token)
     }
 
     func signOut() {
-        phoneDigits = ""
-        defaults.removeObject(forKey: Key.phone)
-    }
-
-    func isValid(code: String) -> Bool {
-        code == Self.mockCode
+        token = nil
+        keychain.removeValue(for: Key.token)
     }
 
     /// Маска ввода: XX XXX XX XX.

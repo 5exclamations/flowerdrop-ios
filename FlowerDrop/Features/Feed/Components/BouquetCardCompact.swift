@@ -4,7 +4,6 @@ import SwiftUI
 /// подпись под ней. Нажатие даёт spring и haptic.
 struct BouquetCardCompact: View {
     let bouquet: Bouquet
-    let remaining: Int
     let namespace: Namespace.ID
     /// Пока экран букета закрыт, геометрию перелёта задаёт карточка.
     let isHeroSource: Bool
@@ -38,7 +37,7 @@ struct BouquetCardCompact: View {
                     .padding(DS.Spacing.xs)
             }
             .overlay(alignment: .topTrailing) {
-                PhotoCountChip(count: remaining)
+                PhotoCountChip(count: bouquet.quantityLeft)
                     .padding(DS.Spacing.xs)
             }
             .overlay(alignment: .bottomLeading) {
@@ -55,7 +54,7 @@ struct BouquetCardCompact: View {
                 .lineLimit(2, reservesSpace: true)
                 .multilineTextAlignment(.leading)
 
-            Text(verbatim: "\(bouquet.shopName) · \(bouquet.distanceText)")
+            Text(verbatim: bouquet.shopLine)
                 .font(DS.Typography.caption)
                 .foregroundStyle(DS.Palette.textSecondary)
                 .lineLimit(1)

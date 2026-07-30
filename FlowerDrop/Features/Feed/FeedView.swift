@@ -2,12 +2,10 @@ import SwiftUI
 
 /// Главный экран: лента «вчерашних» букетов в две колонки.
 struct FeedView: View {
+    let viewModel: FeedViewModel
     let namespace: Namespace.ID
     let isDetailShown: Bool
     let onSelect: (Bouquet) -> Void
-
-    @Environment(ReservationStore.self) private var store
-    @State private var viewModel = FeedViewModel()
 
     private let columns = [
         GridItem(.flexible(), spacing: DS.Spacing.s),
@@ -57,8 +55,8 @@ struct FeedView: View {
             grid(items)
         case .empty:
             emptyState
-        case .failed:
-            failedState
+        case .failed(let retryable):
+            failedState(retryable: retryable)
         }
     }
 
@@ -67,7 +65,6 @@ struct FeedView: View {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, bouquet in
                 BouquetCardCompact(
                     bouquet: bouquet,
-                    remaining: store.remaining(for: bouquet),
                     namespace: namespace,
                     isHeroSource: !isDetailShown
                 ) {
@@ -117,14 +114,19 @@ struct FeedView: View {
         )
     }
 
-    private var failedState: some View {
+    @ViewBuilder
+    private func failedState(retryable: Bool) -> some View {
         FeedPlaceholder(
             systemImage: "wifi.exclamationmark",
             title: "Лента не загрузилась",
-            message: "Проверь соединение и попробуй ещё раз."
+            message: retryable
+                ? "Проверь соединение и попробуй ещё раз."
+                : "Сервер ответил ошибкой. Мы уже знаем."
         ) {
-            PrimaryButton("Повторить", systemImage: "arrow.clockwise") {
-                Task { await viewModel.load() }
+            if retryable {
+                PrimaryButton("Повторить", systemImage: "arrow.clockwise") {
+                    Task { await viewModel.load() }
+                }
             }
         }
     }

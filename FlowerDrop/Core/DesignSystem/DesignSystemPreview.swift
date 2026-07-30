@@ -101,8 +101,8 @@ struct DesignSystemPreview: View {
     private var pricesSection: some View {
         section("Цены") {
             VStack(alignment: .leading, spacing: DS.Spacing.m) {
-                PriceTag(original: 60, current: 30)
-                PriceTag(original: 125.5, current: 62.75)
+                PriceTag(original: 60, current: 30, discountPercent: 50)
+                PriceTag(original: 125.5, current: 62.75, discountPercent: 50)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .dsCard()

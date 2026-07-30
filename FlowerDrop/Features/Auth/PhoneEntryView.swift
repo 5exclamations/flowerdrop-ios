@@ -6,6 +6,8 @@ import SwiftUI
 /// отформатированной строки в `TextField` теряла цифры при быстром наборе.
 struct PhoneEntryView: View {
     @Binding var digits: String
+    let isBusy: Bool
+    let error: LocalizedStringKey?
     let onContinue: () -> Void
 
     @FocusState private var isFocused: Bool
@@ -35,8 +37,14 @@ struct PhoneEntryView: View {
 
             field
 
+            if let error {
+                Label(error, systemImage: "exclamationmark.circle")
+                    .font(DS.Typography.callout)
+                    .foregroundStyle(DS.Palette.accentSecondary)
+            }
+
             PrimaryButton("Получить код", systemImage: "arrow.right", action: onContinue)
-                .disabled(!isComplete)
+                .disabled(!isComplete || isBusy)
 
             Spacer()
         }
