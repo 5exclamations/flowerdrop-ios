@@ -1,0 +1,146 @@
+{
+  "sourceLanguage" : "ru",
+  "strings" : {
+    "Букет дня" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Günün buketi"
+          }
+        }
+      }
+    },
+    "Витрина токенов и компонентов" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tokenlər və komponentlər vitrini"
+          }
+        }
+      }
+    },
+    "Дизайн-система" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dizayn sistemi"
+          }
+        }
+      }
+    },
+    "Забрать сегодня до 21:00" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu gün 21:00-dək götürün"
+          }
+        }
+      }
+    },
+    "Зарезервировать" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rezerv et"
+          }
+        }
+      }
+    },
+    "Кнопки" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Düymələr"
+          }
+        }
+      }
+    },
+    "Осталось 3 букета" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "3 buket qalıb"
+          }
+        }
+      }
+    },
+    "Пионы и эвкалипт" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pionlar və evkalipt"
+          }
+        }
+      }
+    },
+    "Разобрали" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Satılıb"
+          }
+        }
+      }
+    },
+    "Скелетоны" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skeletonlar"
+          }
+        }
+      }
+    },
+    "Типографика" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tipoqrafiya"
+          }
+        }
+      }
+    },
+    "Цвета" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rənglər"
+          }
+        }
+      }
+    },
+    "Цветочная лавка «Нар»" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "«Nar» gül dükanı"
+          }
+        }
+      }
+    },
+    "Цены" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Qiymətlər"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}

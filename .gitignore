@@ -1,0 +1,20 @@
+## macOS
+.DS_Store
+
+## Xcode (проект генерируется XcodeGen из project.yml)
+*.xcodeproj/
+xcuserdata/
+DerivedData/
+build/
+*.xcuserstate
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM.zip
+*.dSYM
+
+## Скриншоты прогонов
+Screenshots/
+
+## Локальные артефакты Claude Code
+.claude/
