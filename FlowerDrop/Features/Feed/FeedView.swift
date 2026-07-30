@@ -2,6 +2,11 @@ import SwiftUI
 
 /// Главный экран: лента «вчерашних» букетов в две колонки.
 struct FeedView: View {
+    let namespace: Namespace.ID
+    let isDetailShown: Bool
+    let onSelect: (Bouquet) -> Void
+
+    @Environment(ReservationStore.self) private var store
     @State private var viewModel = FeedViewModel()
 
     private let columns = [
@@ -60,13 +65,20 @@ struct FeedView: View {
     private func grid(_ items: [Bouquet]) -> some View {
         LazyVGrid(columns: columns, spacing: DS.Spacing.s) {
             ForEach(Array(items.enumerated()), id: \.element.id) { index, bouquet in
-                BouquetCardCompact(bouquet: bouquet) {}
-                    .transition(appearance(at: index))
-                    .scrollTransition { content, phase in
-                        content
-                            .opacity(phase.isIdentity ? 1 : DS.Opacity.medium)
-                            .scaleEffect(phase.isIdentity ? 1 : DS.Motion.pressedScale)
-                    }
+                BouquetCardCompact(
+                    bouquet: bouquet,
+                    remaining: store.remaining(for: bouquet),
+                    namespace: namespace,
+                    isHeroSource: !isDetailShown
+                ) {
+                    onSelect(bouquet)
+                }
+                .transition(appearance(at: index))
+                .scrollTransition { content, phase in
+                    content
+                        .opacity(phase.isIdentity ? 1 : DS.Opacity.medium)
+                        .scaleEffect(phase.isIdentity ? 1 : DS.Motion.pressedScale)
+                }
             }
         }
         .padding(.horizontal, DS.Spacing.m)
@@ -161,8 +173,4 @@ struct FeedPlaceholder<Action: View>: View {
         .padding(.top, DS.Spacing.xl)
         .padding(.horizontal, DS.Spacing.l)
     }
-}
-
-#Preview("Лента") {
-    FeedView()
 }

@@ -4,7 +4,9 @@ import Foundation
 struct Bouquet: Identifiable, Hashable {
     let id: UUID
     let title: String
+    let summary: String
     let shopName: String
+    let shopAddress: String
     let imageURL: URL
     let originalPrice: Decimal
     let discountedPrice: Decimal

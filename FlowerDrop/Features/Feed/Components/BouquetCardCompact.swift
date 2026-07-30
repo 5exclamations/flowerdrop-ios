@@ -4,6 +4,10 @@ import SwiftUI
 /// подпись под ней. Нажатие даёт spring и haptic.
 struct BouquetCardCompact: View {
     let bouquet: Bouquet
+    let remaining: Int
+    let namespace: Namespace.ID
+    /// Пока экран букета закрыт, геометрию перелёта задаёт карточка.
+    let isHeroSource: Bool
     let action: () -> Void
 
     @State private var tapCount = 0
@@ -27,13 +31,14 @@ struct BouquetCardCompact: View {
 
     private var photo: some View {
         BouquetPhoto(url: bouquet.imageURL)
+            .matchedGeometryEffect(id: bouquet.id, in: namespace, isSource: isHeroSource)
             .overlay { DS.photoScrim }
             .overlay(alignment: .topLeading) {
                 DiscountBadge(percent: bouquet.discountPercent)
                     .padding(DS.Spacing.xs)
             }
             .overlay(alignment: .topTrailing) {
-                PhotoCountChip(count: bouquet.quantityLeft)
+                PhotoCountChip(count: remaining)
                     .padding(DS.Spacing.xs)
             }
             .overlay(alignment: .bottomLeading) {

@@ -81,6 +81,10 @@ enum DS {
         static let minimumScale: CGFloat = 0.8
 
         /// Цены — моноширинные цифры, чтобы не «прыгали» при обновлении.
+        /// Код получения резерва — крупно, серифом, с разрядкой.
+        static let code = Font.system(size: 34, weight: .semibold, design: .serif).monospacedDigit()
+        static let codeKerning: CGFloat = 8
+
         static let price = Font.system(size: 22, weight: .semibold).monospacedDigit()
         static let priceCompact = Font.system(size: 17, weight: .semibold).monospacedDigit()
         static let priceStruck = Font.system(size: 15).monospacedDigit()
@@ -91,6 +95,8 @@ enum DS {
 
     enum Motion {
         static let spring = Animation.spring(response: 0.32, dampingFraction: 0.72)
+        /// Перелёт фотографии из ленты на экран букета.
+        static let hero = Animation.spring(response: 0.42, dampingFraction: 0.84)
         static let shimmerDuration: TimeInterval = 1.4
         static let pressedScale: CGFloat = 0.97
         /// Задержка между появлением соседних карточек, с.
@@ -114,6 +120,8 @@ enum DS {
         static let shelfCard: CGFloat = 160
         /// Минимальная зона нажатия по HIG.
         static let minTapTarget: CGFloat = 44
+        /// Разделитель внутри карточки.
+        static let hairline: CGFloat = 1
     }
 
     // MARK: - Формат

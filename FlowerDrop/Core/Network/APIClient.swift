@@ -36,7 +36,9 @@ struct MockAPIClient: APIClient {
         Bouquet(
             id: UUID(uuidString: "A1000000-0000-0000-0000-000000000001")!,
             title: "Тюльпаны в крафте",
+            summary: "Двадцать пять тюльпанов в крафтовой бумаге. Собрали вчера утром, ночь простояли в холодильнике.",
             shopName: "Bakı Buket",
+            shopAddress: "ул. Низами, 28",
             imageURL: photo(36945270),
             originalPrice: 44,
             discountedPrice: 22,
@@ -47,7 +49,9 @@ struct MockAPIClient: APIClient {
         Bouquet(
             id: UUID(uuidString: "A1000000-0000-0000-0000-000000000002")!,
             title: "Розы и подсолнух",
+            summary: "Оранжевые розы, подсолнух и хризантема. В прохладной воде простоит ещё неделю.",
             shopName: "Gül Evi",
+            shopAddress: "пр. Нефтяников, 14",
             imageURL: photo(37222812),
             originalPrice: 58,
             discountedPrice: 29,
@@ -58,7 +62,9 @@ struct MockAPIClient: APIClient {
         Bouquet(
             id: UUID(uuidString: "A1000000-0000-0000-0000-000000000003")!,
             title: "Тюльпаны в бордо",
+            summary: "Розовые тюльпаны в бордовой бумаге. Простой букет на каждый день, без лишнего декора.",
             shopName: "Nərgiz Çiçək",
+            shopAddress: "ул. Ази Асланова, 7",
             imageURL: photo(7311450),
             originalPrice: 30,
             discountedPrice: 15,
@@ -69,7 +75,9 @@ struct MockAPIClient: APIClient {
         Bouquet(
             id: UUID(uuidString: "A1000000-0000-0000-0000-000000000004")!,
             title: "Кустовые розы",
+            summary: "Пастельные кустовые розы с эвкалиптом. Мелкие бутоны раскроются за пару дней.",
             shopName: "Lalə Studio",
+            shopAddress: "ул. Ахмеда Джавада, 3",
             imageURL: photo(20295105),
             originalPrice: 36,
             discountedPrice: 18,
@@ -80,7 +88,9 @@ struct MockAPIClient: APIClient {
         Bouquet(
             id: UUID(uuidString: "A1000000-0000-0000-0000-000000000005")!,
             title: "Летний микс",
+            summary: "Сборный букет из того, что осталось к вечеру: хризантемы, альстромерии и зелень.",
             shopName: "Səhər Gülləri",
+            shopAddress: "ул. Шарифзаде, 41",
             imageURL: photo(20617542),
             originalPrice: 24,
             discountedPrice: 12,
@@ -91,7 +101,9 @@ struct MockAPIClient: APIClient {
         Bouquet(
             id: UUID(uuidString: "A1000000-0000-0000-0000-000000000006")!,
             title: "Ранункулюсы",
+            summary: "Коралловые ранункулюсы в матовой плёнке. Бутоны раскроются полностью на второй день.",
             shopName: "İçərişəhər Flora",
+            shopAddress: "ул. Кичик Гала, 12",
             imageURL: photo(20704831),
             originalPrice: 50,
             discountedPrice: 25,
@@ -102,7 +114,9 @@ struct MockAPIClient: APIClient {
         Bouquet(
             id: UUID(uuidString: "A1000000-0000-0000-0000-000000000007")!,
             title: "Пионы кораллом",
+            summary: "Пионовидные розы кораллового оттенка. Крупные бутоны, плотная упаковка в два слоя.",
             shopName: "Fəvvarə Çiçək",
+            shopAddress: "ул. Расула Рзы, 9",
             imageURL: photo(5656731),
             originalPrice: 60,
             discountedPrice: 30,
@@ -113,7 +127,9 @@ struct MockAPIClient: APIClient {
         Bouquet(
             id: UUID(uuidString: "A1000000-0000-0000-0000-000000000008")!,
             title: "Анемоны и рускус",
+            summary: "Фиолетовые анемоны с рускусом в зелёной бумаге. Небольшой букет для рабочего стола.",
             shopName: "Nizami Gül Bazar",
+            shopAddress: "ул. Тарлана Алиярбекова, 22",
             imageURL: photo(23094210),
             originalPrice: 18,
             discountedPrice: 9,

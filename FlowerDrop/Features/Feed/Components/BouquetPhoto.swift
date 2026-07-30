@@ -1,11 +1,17 @@
 import SwiftUI
 
-/// Фото букета 4:5 — основа всех карточек ленты.
+/// Фото букета 4:5 — основа карточек ленты и экрана букета.
 /// Пока грузится, на его месте живёт скелетон того же размера,
 /// поэтому лента не дёргается при появлении картинок.
 struct BouquetPhoto: View {
     let url: URL
     var parallax = true
+
+    /// Перелёт карточки на экран букета пересоздаёт вью и отменяет загрузку —
+    /// без повтора вместо фотографии навсегда оставалась бы заглушка.
+    private static let maxAttempts = 3
+
+    @State private var attempt = 0
 
     var body: some View {
         Color.clear
@@ -17,21 +23,39 @@ struct BouquetPhoto: View {
                 ) { phase in
                     switch phase {
                     case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill()
-                            .scaleEffect(parallax ? DS.Motion.parallaxOverscan : 1)
-                            .visualEffect { content, proxy in
-                                content.offset(y: parallax ? Self.shift(proxy) : 0)
-                            }
+                        photo(image)
                     case .failure:
-                        unavailable
+                        retryOrFail
                     default:
                         SkeletonView()
                     }
                 }
+                .id(attempt)
             }
             .clipped()
+    }
+
+    private func photo(_ image: Image) -> some View {
+        image
+            .resizable()
+            .scaledToFill()
+            .scaleEffect(parallax ? DS.Motion.parallaxOverscan : 1)
+            .visualEffect { content, proxy in
+                content.offset(y: parallax ? Self.shift(proxy) : 0)
+            }
+    }
+
+    @ViewBuilder
+    private var retryOrFail: some View {
+        if attempt < Self.maxAttempts {
+            SkeletonView()
+                .task {
+                    try? await Task.sleep(for: .milliseconds(400))
+                    attempt += 1
+                }
+        } else {
+            unavailable
+        }
     }
 
     /// Сдвигаем кадр относительно его позиции в скролле — фотография
