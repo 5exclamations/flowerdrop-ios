@@ -4,9 +4,9 @@ import SwiftUI
 struct ReservationSuccessView: View {
     let reservation: ReservationStore.Reservation
     let onClose: () -> Void
+    let onOpenReservations: () -> Void
 
     @State private var celebrated = false
-    @State private var showsReservations = false
 
     var body: some View {
         VStack(spacing: DS.Spacing.m) {
@@ -31,9 +31,7 @@ struct ReservationSuccessView: View {
             Spacer(minLength: DS.Spacing.xl)
 
             VStack(spacing: DS.Spacing.xs) {
-                PrimaryButton("В мои резервы", systemImage: "basket") {
-                    showsReservations = true
-                }
+                PrimaryButton("В мои резервы", systemImage: "basket", action: onOpenReservations)
 
                 Button("Закрыть", action: onClose)
                     .font(DS.Typography.body)
@@ -46,9 +44,6 @@ struct ReservationSuccessView: View {
         .background(DS.Palette.bg)
         .sensoryFeedback(.success, trigger: celebrated)
         .onAppear { celebrated = true }
-        .sheet(isPresented: $showsReservations) {
-            MyReservationsView()
-        }
     }
 
     private var code: some View {

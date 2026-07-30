@@ -1,376 +1,496 @@
 {
-  "sourceLanguage" : "ru",
-  "strings" : {
-    "Адрес" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ünvan"
+  "sourceLanguage": "ru",
+  "strings": {
+    "Адрес": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ünvan"
           }
         }
       }
     },
-    "Баку" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bakı"
+    "Баку": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bakı"
           }
         }
       }
     },
-    "Букет ваш" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buket sizindir"
+    "Букет ваш": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buket sizindir"
           }
         }
       }
     },
-    "Букет дня" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Günün buketi"
+    "Букет дня": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Günün buketi"
           }
         }
       }
     },
-    "В мои резервы" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rezervlərimə"
+    "В мои резервы": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezervlərimə"
           }
         }
       }
     },
-    "Витрина токенов и компонентов" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tokenlər və komponentlər vitrini"
+    "Витрина токенов и компонентов": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tokenlər və komponentlər vitrini"
           }
         }
       }
     },
-    "Дизайн-система" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Dizayn sistemi"
+    "Вход по номеру": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nömrə ilə giriş"
           }
         }
       }
     },
-    "до %@" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%@-dək"
+    "Дизайн-система": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dizayn sistemi"
           }
         }
       }
     },
-    "Забрать до" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Götürmə vaxtı"
+    "до %@": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@-dək"
           }
         }
       }
     },
-    "Забрать сегодня до 21:00" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu gün 21:00-dək götürün"
+    "Забрал": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Aldım"
           }
         }
       }
     },
-    "Загляни вечером — лавки выкладывают вчерашние букеты после шести." : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Axşam bax — dükanlar dünənki buketləri altıdan sonra çıxarır."
+    "Забрать до": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Götürmə vaxtı"
           }
         }
       }
     },
-    "Закрыть" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bağla"
+    "Забрать сегодня до 21:00": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu gün 21:00-dək götürün"
           }
         }
       }
     },
-    "Зарезервировать" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rezerv et"
+    "Загляни вечером — лавки выкладывают вчерашние букеты после шести.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Axşam bax — dükanlar dünənki buketləri altıdan sonra çıxarır."
           }
         }
       }
     },
-    "Зарезервируй букет — он появится здесь вместе с кодом получения." : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buketi rezerv et — alma kodu ilə burada görünəcək."
+    "Закрыть": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bağla"
           }
         }
       }
     },
-    "Итого" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yekun"
+    "Зарезервировать": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezerv et"
           }
         }
       }
     },
-    "Кнопки" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Düymələr"
+    "Зарезервируй букет — он появится здесь вместе с кодом получения.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buketi rezerv et — alma kodu ilə burada görünəcək."
           }
         }
       }
     },
-    "Код получения" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Alma kodu"
+    "истёк": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vaxtı bitib"
           }
         }
       }
     },
-    "Лента не загрузилась" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Lent yüklənmədi"
+    "Итого": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yekun"
           }
         }
       }
     },
-    "Мои резервы" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rezervlərim"
+    "Кнопки": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Düymələr"
           }
         }
       }
     },
-    "Назад" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Geri"
+    "Код": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kod"
           }
         }
       }
     },
-    "Назовите код в лавке — резерв держится до %@" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Kodu dükanda deyin — rezerv %@-dək qüvvədədir"
+    "Код из SMS": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SMS-dəki kod"
           }
         }
       }
     },
-    "осталось %lld" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld ədəd qalıb"
+    "Код получения": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Alma kodu"
           }
         }
       }
     },
-    "Осталось 3 букета" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "3 buket qalıb"
+    "Лента": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lent"
           }
         }
       }
     },
-    "Пионы и эвкалипт" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pionlar və evkalipt"
+    "Лента не загрузилась": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Lent yüklənmədi"
           }
         }
       }
     },
-    "Повторить" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yenidən cəhd et"
+    "Мои резервы": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezervlərim"
           }
         }
       }
     },
-    "Подтвердить резерв" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rezervi təsdiqlə"
+    "Назад": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Geri"
           }
         }
       }
     },
-    "Пока пусто" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Hələ boşdur"
+    "Назовите код в лавке — резерв держится до %@": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kodu dükanda deyin — rezerv %@-dək qüvvədədir"
           }
         }
       }
     },
-    "Проверь соединение и попробуй ещё раз." : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bağlantını yoxla və yenidən cəhd et."
+    "Неверный код": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kod yanlışdır"
           }
         }
       }
     },
-    "Разобрали" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Satılıb"
+    "осталось %@": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ qalıb"
           }
         }
       }
     },
-    "Резерв букета" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Buket rezervi"
+    "осталось %lld": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld ədəd qalıb"
           }
         }
       }
     },
-    "Резерв держится 2 часа" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rezerv 2 saat saxlanılır"
+    "Осталось 3 букета": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "3 buket qalıb"
           }
         }
       }
     },
-    "Сегодня всё разобрали" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Bu gün hamısı satılıb"
+    "Отправили на %@": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ nömrəsinə göndərdik"
           }
         }
       }
     },
-    "Скелетоны" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skeletonlar"
+    "Пионы и эвкалипт": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Pionlar və evkalipt"
           }
         }
       }
     },
-    "Типографика" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tipoqrafiya"
+    "Повторить": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yenidən cəhd et"
           }
         }
       }
     },
-    "Цвета" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Rənglər"
+    "Подтвердить резерв": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezervi təsdiqlə"
           }
         }
       }
     },
-    "Цветочная лавка «Нар»" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "«Nar» gül dükanı"
+    "Пока нет резервов": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hələ rezerv yoxdur"
           }
         }
       }
     },
-    "Цены" : {
-      "localizations" : {
-        "az" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Qiymətlər"
+    "получен": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "alınıb"
+          }
+        }
+      }
+    },
+    "Получить код": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Kodu al"
+          }
+        }
+      }
+    },
+    "Пришлём код в SMS — он нужен, чтобы держать резерв за вами.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "SMS-lə kod göndərəcəyik — rezervi sizin üçün saxlamaq lazımdır."
+          }
+        }
+      }
+    },
+    "Проверь соединение и попробуй ещё раз.": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bağlantını yoxla və yenidən cəhd et."
+          }
+        }
+      }
+    },
+    "Разобрали": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Satılıb"
+          }
+        }
+      }
+    },
+    "Резерв букета": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buket rezervi"
+          }
+        }
+      }
+    },
+    "Резерв держится 2 часа": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rezerv 2 saat saxlanılır"
+          }
+        }
+      }
+    },
+    "Сегодня всё разобрали": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu gün hamısı satılıb"
+          }
+        }
+      }
+    },
+    "Скелетоны": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skeletonlar"
+          }
+        }
+      }
+    },
+    "Типографика": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Tipoqrafiya"
+          }
+        }
+      }
+    },
+    "Цвета": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Rənglər"
+          }
+        }
+      }
+    },
+    "Цветочная лавка «Нар»": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "«Nar» gül dükanı"
+          }
+        }
+      }
+    },
+    "Цены": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Qiymətlər"
           }
         }
       }
     }
   },
-  "version" : "1.0"
+  "version": "1.0"
 }

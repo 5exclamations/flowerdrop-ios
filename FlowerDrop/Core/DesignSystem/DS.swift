@@ -98,6 +98,7 @@ enum DS {
         /// Перелёт фотографии из ленты на экран букета.
         static let hero = Animation.spring(response: 0.42, dampingFraction: 0.84)
         static let shimmerDuration: TimeInterval = 1.4
+        static let shakeDuration: TimeInterval = 0.4
         static let pressedScale: CGFloat = 0.97
         /// Задержка между появлением соседних карточек, с.
         static let staggerStep: TimeInterval = 0.05
@@ -122,6 +123,10 @@ enum DS {
         static let minTapTarget: CGFloat = 44
         /// Разделитель внутри карточки.
         static let hairline: CGFloat = 1
+        /// Ячейка кода из SMS.
+        static let otpCell: CGFloat = 64
+        /// Мини-фото в карточке резерва.
+        static let thumbnail: CGFloat = 64
     }
 
     // MARK: - Формат

@@ -6,12 +6,29 @@ struct BouquetDetailView: View {
     let bouquet: Bouquet
     let namespace: Namespace.ID
     let onClose: () -> Void
+    let onShowReservations: () -> Void
 
     @Environment(ReservationStore.self) private var store
+    @Environment(AuthStore.self) private var auth
 
     @State private var isConfirming = false
     @State private var pendingReservation: ReservationStore.Reservation?
-    @State private var successReservation: ReservationStore.Reservation?
+    @State private var presented: Presentation?
+    @State private var confirmAfterAuth = false
+
+    /// Полноэкранных презентаций на вью может быть только одна,
+    /// поэтому вход и успех живут в общем перечислении.
+    private enum Presentation: Identifiable {
+        case auth
+        case success(ReservationStore.Reservation)
+
+        var id: String {
+            switch self {
+            case .auth: "auth"
+            case .success(let reservation): reservation.id.uuidString
+            }
+        }
+    }
 
     private var remaining: Int {
         store.remaining(for: bouquet)
@@ -34,18 +51,44 @@ struct BouquetDetailView: View {
                 isConfirming = false
             }
         }
-        .fullScreenCover(item: $successReservation) { reservation in
-            ReservationSuccessView(reservation: reservation) {
-                successReservation = nil
+        .fullScreenCover(item: $presented, onDismiss: continueAfterAuth) { presentation in
+            switch presentation {
+            case .auth:
+                AuthFlowView()
+            case .success(let reservation):
+                ReservationSuccessView(reservation: reservation) {
+                    presented = nil
+                } onOpenReservations: {
+                    presented = nil
+                    onShowReservations()
+                }
             }
         }
+    }
+
+    // MARK: - Сценарий резерва
+
+    private func reserveTapped() {
+        guard auth.isSignedIn else {
+            confirmAfterAuth = true
+            presented = .auth
+            return
+        }
+        isConfirming = true
+    }
+
+    /// После входа сразу продолжаем резерв — пользователь нажимал именно его.
+    private func continueAfterAuth() {
+        guard confirmAfterAuth else { return }
+        confirmAfterAuth = false
+        if auth.isSignedIn { isConfirming = true }
     }
 
     /// Успех показываем только после того, как sheet закрылся —
     /// две презентации одновременно iOS не любит.
     private func presentSuccessIfReserved() {
         guard let pendingReservation else { return }
-        successReservation = pendingReservation
+        presented = .success(pendingReservation)
         self.pendingReservation = nil
     }
 
@@ -118,10 +161,9 @@ struct BouquetDetailView: View {
     private var reserveBar: some View {
         PrimaryButton(
             remaining > 0 ? "Зарезервировать" : "Разобрали",
-            systemImage: remaining > 0 ? "basket" : "xmark"
-        ) {
-            isConfirming = true
-        }
+            systemImage: remaining > 0 ? "basket" : "xmark",
+            action: reserveTapped
+        )
         .disabled(remaining == 0)
         .padding(DS.Spacing.m)
         .background(DS.Palette.surface.ignoresSafeArea(edges: .bottom))
