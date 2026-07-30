@@ -1,6 +1,16 @@
 {
   "sourceLanguage" : "ru",
   "strings" : {
+    "Баку" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bakı"
+          }
+        }
+      }
+    },
     "Букет дня" : {
       "localizations" : {
         "az" : {
@@ -31,12 +41,32 @@
         }
       }
     },
+    "до %@" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@-dək"
+          }
+        }
+      }
+    },
     "Забрать сегодня до 21:00" : {
       "localizations" : {
         "az" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Bu gün 21:00-dək götürün"
+          }
+        }
+      }
+    },
+    "Загляни вечером — лавки выкладывают вчерашние букеты после шести." : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Axşam bax — dükanlar dünənki buketləri altıdan sonra çıxarır."
           }
         }
       }
@@ -61,6 +91,26 @@
         }
       }
     },
+    "Лента не загрузилась" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lent yüklənmədi"
+          }
+        }
+      }
+    },
+    "осталось %lld" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld ədəd qalıb"
+          }
+        }
+      }
+    },
     "Осталось 3 букета" : {
       "localizations" : {
         "az" : {
@@ -81,12 +131,42 @@
         }
       }
     },
+    "Повторить" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yenidən cəhd et"
+          }
+        }
+      }
+    },
+    "Проверь соединение и попробуй ещё раз." : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bağlantını yoxla və yenidən cəhd et."
+          }
+        }
+      }
+    },
     "Разобрали" : {
       "localizations" : {
         "az" : {
           "stringUnit" : {
             "state" : "translated",
             "value" : "Satılıb"
+          }
+        }
+      }
+    },
+    "Сегодня всё разобрали" : {
+      "localizations" : {
+        "az" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bu gün hamısı satılıb"
           }
         }
       }

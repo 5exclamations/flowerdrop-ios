@@ -4,7 +4,7 @@ import SwiftUI
 struct FlowerDropApp: App {
     var body: some Scene {
         WindowGroup {
-            DesignSystemPreview()
+            FeedView()
                 .tint(DS.Palette.accent)
         }
     }

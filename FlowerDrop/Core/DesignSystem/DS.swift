@@ -17,6 +17,23 @@ enum DS {
         static let onAccent = Color("onAccent")
         static let textPrimary = Color("textPrimary")
         static let textSecondary = Color("textSecondary")
+
+        /// Скрим поверх фотографии тёмный в обеих темах — значит и контент
+        /// поверх него всегда светлый. Это не «магический white», а токен.
+        static let scrim = Color.black
+        static let onPhoto = Color.white
+    }
+
+    /// Затемнение под ценой и дедлайном на фото.
+    static var photoScrim: LinearGradient {
+        LinearGradient(
+            stops: [
+                .init(color: .clear, location: 0),
+                .init(color: Palette.scrim.opacity(Opacity.strong), location: 1)
+            ],
+            startPoint: .center,
+            endPoint: .bottom
+        )
     }
 
     // MARK: - Сетка отступов (8pt)
@@ -65,6 +82,7 @@ enum DS {
 
         /// Цены — моноширинные цифры, чтобы не «прыгали» при обновлении.
         static let price = Font.system(size: 22, weight: .semibold).monospacedDigit()
+        static let priceCompact = Font.system(size: 17, weight: .semibold).monospacedDigit()
         static let priceStruck = Font.system(size: 15).monospacedDigit()
         static let badge = Font.system(size: 13, weight: .semibold).monospacedDigit()
     }
@@ -75,6 +93,12 @@ enum DS {
         static let spring = Animation.spring(response: 0.32, dampingFraction: 0.72)
         static let shimmerDuration: TimeInterval = 1.4
         static let pressedScale: CGFloat = 0.97
+        /// Задержка между появлением соседних карточек, с.
+        static let staggerStep: TimeInterval = 0.05
+        /// Глубина параллакса фотографии при скролле, pt.
+        static let parallaxDepth: CGFloat = 24
+        /// Запас фотографии за краями кадра, чтобы параллакс не оголял углы.
+        static let parallaxOverscan: CGFloat = 1.16
     }
 
     // MARK: - Размеры
@@ -86,6 +110,10 @@ enum DS {
         static let photoAspectRatio: CGFloat = 4.0 / 5.0
         static let swatch: CGFloat = 56
         static let swatchMinWidth: CGFloat = 96
+        /// Ширина карточки в горизонтальной полке «рядом с тобой».
+        static let shelfCard: CGFloat = 160
+        /// Минимальная зона нажатия по HIG.
+        static let minTapTarget: CGFloat = 44
     }
 
     // MARK: - Формат
