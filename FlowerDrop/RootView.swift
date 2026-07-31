@@ -9,6 +9,8 @@ struct RootView: View {
     @State private var tab: Tab = .feed
     @State private var selected: Bouquet?
     @Namespace private var hero
+    /// Экран знакомства показывается один раз за установку.
+    @AppStorage("onboarding.seen") private var hasSeenOnboarding = false
 
     private let client: any APIClient
 
@@ -62,6 +64,14 @@ struct RootView: View {
                 )
                 .transition(.opacity)
                 .zIndex(1)
+            }
+
+            if !hasSeenOnboarding {
+                OnboardingView {
+                    withAnimation(DS.Motion.spring) { hasSeenOnboarding = true }
+                }
+                .transition(.opacity)
+                .zIndex(2)
             }
         }
         .environment(\.apiClient, client)

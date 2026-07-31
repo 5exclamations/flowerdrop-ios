@@ -46,7 +46,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rezervlərimə"
+            "value": "Rezervlərimə keç"
           }
         }
       }
@@ -56,7 +56,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Tokenlər və komponentlər vitrini"
+            "value": "Token və komponent vitrini"
           }
         }
       }
@@ -71,12 +71,22 @@
         }
       }
     },
+    "Вчерашние букеты": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dünənki buketlər"
+          }
+        }
+      }
+    },
     "Выбери букет в ленте — войти попросим на резерве.": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Lentdən buket seç — girişi rezerv zamanı istəyəcəyik."
+            "value": "Lentdən buket seçin — giriş yalnız rezerv üçün lazım olacaq."
           }
         }
       }
@@ -131,12 +141,22 @@
         }
       }
     },
+    "Забрать сегодня, до закрытия лавки": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu gün, dükan bağlanana qədər götürün"
+          }
+        }
+      }
+    },
     "Загляни вечером — лавки выкладывают вчерашние букеты после шести.": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Axşam bax — dükanlar dünənki buketləri altıdan sonra çıxarır."
+            "value": "Axşam qayıdın — dükanlar dünənki buketləri saat altıdan sonra çıxarır."
           }
         }
       }
@@ -166,7 +186,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Buketi rezerv et — alma kodu ilə burada görünəcək."
+            "value": "Buket rezerv edin — götürmə kodu ilə birlikdə burada görünəcək."
           }
         }
       }
@@ -186,7 +206,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Yekun"
+            "value": "Cəmi"
           }
         }
       }
@@ -216,7 +236,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "SMS-dəki kod"
+            "value": "SMS kodu"
           }
         }
       }
@@ -226,7 +246,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alma kodu"
+            "value": "Götürmə kodu"
           }
         }
       }
@@ -236,7 +256,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Alma kodu «Rezervlərim»də gözləyir."
+            "value": "Götürmə kodu «Rezervlərim»dədir."
           }
         }
       }
@@ -296,7 +316,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kodu dükanda deyin — rezerv %@-dək qüvvədədir"
+            "value": "Kodu dükanda deyin — buketi %@-dək saxlayırıq"
           }
         }
       }
@@ -306,7 +326,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rezerv etmək alınmadı"
+            "value": "Rezerv alınmadı"
           }
         }
       }
@@ -316,7 +336,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kodu göndərmək alınmadı"
+            "value": "Kod göndərilmədi"
           }
         }
       }
@@ -326,7 +346,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kodu yoxlamaq alınmadı"
+            "value": "Kodu yoxlaya bilmədik"
           }
         }
       }
@@ -366,7 +386,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "%lld ədəd qalıb"
+            "value": "%lld qalıb"
           }
         }
       }
@@ -396,7 +416,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Pionlar və evkalipt"
+            "value": "Pion və evkalipt"
           }
         }
       }
@@ -436,7 +456,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "alınıb"
+            "value": "götürülüb"
           }
         }
       }
@@ -446,7 +466,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Kodu al"
+            "value": "Kodu göndər"
           }
         }
       }
@@ -466,7 +486,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "SMS-lə kod göndərəcəyik — rezervi sizin üçün saxlamaq lazımdır."
+            "value": "SMS ilə kod göndərəcəyik — buketi sizin adınıza saxlamaq üçün lazımdır."
           }
         }
       }
@@ -476,7 +496,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nömrəni yoxla."
+            "value": "Nömrəni yoxlayın."
           }
         }
       }
@@ -486,7 +506,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bağlantını yoxla və yenidən cəhd et."
+            "value": "İnternet bağlantısını yoxlayın və yenidən cəhd edin."
           }
         }
       }
@@ -516,7 +536,17 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rezerv 2 saat saxlanılır"
+            "value": "Buketi 2 saat saxlayırıq"
+          }
+        }
+      }
+    },
+    "Резерв за минуту — код придёт сразу": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bir dəqiqəyə rezerv — kod dərhal gəlir"
           }
         }
       }
@@ -536,7 +566,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Rezervlər girişdən sonra"
+            "value": "Girişdən sonra görünəcək"
           }
         }
       }
@@ -556,7 +586,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Server xəta qaytardı. Artıq bilirik."
+            "value": "Serverdə xəta oldu. Artıq bilirik."
           }
         }
       }
@@ -571,12 +601,32 @@
         }
       }
     },
+    "Скидка −50% на то, что не разобрали вчера": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dünən satılmayanlara −50% endirim"
+          }
+        }
+      }
+    },
     "Слишком часто. Подожди минуту.": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Çox tez-tez. Bir dəqiqə gözlə."
+            "value": "Çox tez-tez. Bir dəqiqə gözləyin."
+          }
+        }
+      }
+    },
+    "Смотреть букеты": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buketlərə bax"
           }
         }
       }
@@ -596,7 +646,7 @@
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Bu dəqiqə satıldı"
+            "value": "İndicə satıldı"
           }
         }
       }

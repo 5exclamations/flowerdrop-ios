@@ -151,6 +151,8 @@ enum DS {
         static let otpCell: CGFloat = 64
         /// Мини-фото в карточке резерва.
         static let thumbnail: CGFloat = 64
+        /// Знак на экране знакомства.
+        static let onboardingMark: CGFloat = 96
     }
 
     // MARK: - Формат
