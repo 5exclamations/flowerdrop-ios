@@ -1,0 +1,35 @@
+# gitleaks configuration for FlowerDrop.
+#
+# The default rule set does all the work; the only addition is one narrow
+# exception. Scan the whole history with:
+#
+#   gitleaks git --log-opts="--all --full-history" --redact --no-banner -v
+#
+title = "FlowerDrop"
+
+[extend]
+useDefault = true
+
+# API_CONTRACT.md documents the auth flow, so it has to show what a token
+# response looks like. The value below is invented — it appears exactly twice,
+# both times in that file, and never in code, tests or fixtures.
+#
+# Three things keep this exception from becoming a hole:
+#
+#   * targetRules limits it to the one rule that fires here. It is also what
+#     keeps the file scanned at all: a global allowlist carrying `paths` makes
+#     gitleaks skip the whole file before any rule runs, which would mean a
+#     real key pasted into API_CONTRACT.md sails through.
+#   * condition = "AND" requires the path AND the secret to match, instead of
+#     the default OR.
+#   * The regex is anchored to this exact value, not a shape.
+#
+# Verified by scanning a fixture: a different secret in API_CONTRACT.md is
+# still reported, and this same value in any other file is still reported.
+[[allowlists]]
+description = "Example token in the API documentation, not a credential"
+targetRules = ["generic-api-key"]
+condition = "AND"
+paths = ['''(^|/)API_CONTRACT\.md$''']
+regexTarget = "secret"
+regexes = ['''^9f4c1e0b7ac2d1e35f6a8b0c2d4e6f8a1b3c5d7e$''']
