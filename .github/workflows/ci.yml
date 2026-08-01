@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: secrets + build
+    runs-on: macos-15
+
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          # gitleaks below walks the whole history, which a shallow clone
+          # would hide.
+          fetch-depth: 0
+
+      # Первым шагом: утечка должна валить сборку за секунды, а не после
+      # компиляции. Версия бинарника прибита к той, что гоняется локально.
+      - name: Scan history for secrets
+        env:
+          GITLEAKS_VERSION: 8.30.1
+        run: |
+          set -euo pipefail
+          curl -sSfL -o gitleaks.tar.gz \
+            "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_darwin_arm64.tar.gz"
+          tar -xzf gitleaks.tar.gz gitleaks
+          ./gitleaks git --log-opts="--all --full-history" \
+            --config .gitleaks.toml --redact --no-banner --verbose
+          rm -f gitleaks gitleaks.tar.gz
+
+      - name: Install XcodeGen
+        run: brew install xcodegen
+
+      # .xcodeproj в репозиторий не коммитится — проект каждый раз собирается
+      # из project.yml, и этот шаг заодно проверяет, что список файлов в нём
+      # не разошёлся с деревом.
+      - name: Generate project
+        run: xcodegen generate
+
+      # Generic-назначение вместо конкретного устройства: сборке нужен SDK
+      # симулятора, а не запущенный симулятор, и она не падает от того, что
+      # на раннере другой набор устройств.
+      - name: Build
+        run: |
+          set -o pipefail
+          xcodebuild build \
+            -project FlowerDrop.xcodeproj \
+            -scheme FlowerDrop \
+            -configuration Debug \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO
