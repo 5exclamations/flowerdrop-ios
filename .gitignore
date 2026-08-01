@@ -13,8 +13,8 @@ build/
 *.dSYM.zip
 *.dSYM
 
-## Скриншоты прогонов
-Screenshots/
+## Скриншоты прогонов (только в корне — docs/screenshots идёт в репозиторий)
+/Screenshots/
 
 ## Локальные артефакты Claude Code
 .claude/
