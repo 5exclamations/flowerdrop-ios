@@ -34,8 +34,17 @@ jobs:
             --config .gitleaks.toml --redact --no-banner --verbose
           rm -f gitleaks gitleaks.tar.gz
 
+      # Релизный архив вместо brew: версия прибита, шаг не зависит от того,
+      # какие тапы предустановлены в образе раннера.
       - name: Install XcodeGen
-        run: brew install xcodegen
+        env:
+          XCODEGEN_VERSION: 2.46.0
+        run: |
+          set -euo pipefail
+          curl -sSfL -o xcodegen.zip \
+            "https://github.com/yonaskolb/XcodeGen/releases/download/${XCODEGEN_VERSION}/xcodegen.zip"
+          unzip -q xcodegen.zip
+          echo "$PWD/xcodegen/bin" >> "$GITHUB_PATH"
 
       # .xcodeproj в репозиторий не коммитится — проект каждый раз собирается
       # из project.yml, и этот шаг заодно проверяет, что список файлов в нём
