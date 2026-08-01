@@ -1,5 +1,7 @@
 # FlowerDrop — iOS
 
+[![CI](https://github.com/5exclamations/flowerdrop-ios/actions/workflows/ci.yml/badge.svg)](https://github.com/5exclamations/flowerdrop-ios/actions/workflows/ci.yml)
+
 Маркетплейс «вчерашних» букетов со скидкой −50%. Лавки Баку выкладывают то, что
 осталось к вечеру; покупатель резервирует букет с телефона и забирает его до
 закрытия. Это клиент; сервер живёт в отдельной репе —
