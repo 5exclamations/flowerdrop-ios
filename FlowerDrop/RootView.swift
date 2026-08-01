@@ -1,8 +1,44 @@
 import SwiftUI
 
+/// Корень приложения: выбирает, с каким бэкендом работать — настоящим или
+/// демонстрационным, — и пересоздаёт сцену при переключении.
+///
+/// Сторы получают клиента в `init`, поэтому подменить его на лету нельзя:
+/// `.id(isDemoMode)` заставляет SwiftUI собрать сцену заново, и вместе с ней
+/// заново создаются лента, вход и резервы. Это же и есть сброс состояния
+/// при выходе из демо.
+struct RootView: View {
+    @AppStorage(DemoMode.storageKey) private var isDemoMode = false
+    @State private var demoClient = DemoAPIClient()
+
+    private let liveClient: any APIClient
+
+    init(client: any APIClient = RealAPIClient()) {
+        self.liveClient = client
+    }
+
+    var body: some View {
+        AppScene(
+            client: isDemoMode ? demoClient : liveClient,
+            authNamespace: isDemoMode ? DemoMode.authNamespace : ""
+        )
+        .id(isDemoMode)
+        .environment(\.isDemoMode, isDemoMode)
+        .environment(\.demoModeToggle, DemoModeToggle(toggle: toggleDemoMode))
+    }
+
+    /// Демо всегда начинается с чистого листа: новый клиент — значит пустые
+    /// резервы и полный остаток, а демо-токен не переживает показ.
+    private func toggleDemoMode() {
+        AuthStore.clear(namespace: DemoMode.authNamespace)
+        demoClient = DemoAPIClient()
+        withAnimation(DS.Motion.spring) { isDemoMode.toggle() }
+    }
+}
+
 /// Две вкладки, а поверх них — экран букета: лента и деталь обязаны жить
 /// в одном стеке, иначе фотография не перелетит из карточки.
-struct RootView: View {
+private struct AppScene: View {
     @State private var feed: FeedViewModel
     @State private var auth: AuthStore
     @State private var reservations: ReservationStore
@@ -19,9 +55,9 @@ struct RootView: View {
         case reservations
     }
 
-    init(client: any APIClient = RealAPIClient()) {
+    init(client: any APIClient, authNamespace: String) {
         self.client = client
-        let auth = AuthStore(client: client)
+        let auth = AuthStore(client: client, namespace: authNamespace)
         _auth = State(initialValue: auth)
         _feed = State(initialValue: FeedViewModel(client: client))
         _reservations = State(initialValue: ReservationStore(client: client, auth: auth))

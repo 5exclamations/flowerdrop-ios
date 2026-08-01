@@ -18,6 +18,9 @@ final class AuthStore {
     private let client: any APIClient
     private let defaults: UserDefaults
     private let keychain: KeychainStore
+    /// Префикс ключей. Демо-режим живёт в своём пространстве, иначе вход
+    /// на показе затирал бы настоящий токен, а выход из демо — уносил его.
+    private let namespace: String
 
     private(set) var phoneDigits: String
     private(set) var token: String?
@@ -33,14 +36,26 @@ final class AuthStore {
 
     init(
         client: any APIClient,
+        namespace: String = "",
         defaults: UserDefaults = .standard,
         keychain: KeychainStore = KeychainStore()
     ) {
         self.client = client
+        self.namespace = namespace
         self.defaults = defaults
         self.keychain = keychain
-        self.phoneDigits = defaults.string(forKey: Key.phone) ?? ""
-        self.token = keychain.string(for: Key.token)
+        self.phoneDigits = defaults.string(forKey: namespace + Key.phone) ?? ""
+        self.token = keychain.string(for: namespace + Key.token)
+    }
+
+    /// Стереть сессию пространства целиком — нужно при выходе из демо-режима.
+    static func clear(
+        namespace: String,
+        defaults: UserDefaults = .standard,
+        keychain: KeychainStore = KeychainStore()
+    ) {
+        defaults.removeObject(forKey: namespace + Key.phone)
+        keychain.removeValue(for: namespace + Key.token)
     }
 
     /// Шаг 1: попросить код. Сервер сам нормализует номер.
@@ -48,7 +63,7 @@ final class AuthStore {
     func requestCode(phoneDigits: String) async throws -> OTPChallenge {
         let challenge = try await client.requestCode(phone: Self.countryCode + phoneDigits)
         self.phoneDigits = phoneDigits
-        defaults.set(phoneDigits, forKey: Key.phone)
+        defaults.set(phoneDigits, forKey: namespace + Key.phone)
         return challenge
     }
 
@@ -59,12 +74,12 @@ final class AuthStore {
             code: code
         )
         token = session.token
-        keychain.set(session.token, for: Key.token)
+        keychain.set(session.token, for: namespace + Key.token)
     }
 
     func signOut() {
         token = nil
-        keychain.removeValue(for: Key.token)
+        keychain.removeValue(for: namespace + Key.token)
     }
 
     /// Маска ввода: XX XXX XX XX.

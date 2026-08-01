@@ -91,22 +91,23 @@
         }
       }
     },
+    "Демо-режим": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Demo rejimi"
+          }
+        }
+      }
+    },
     "Дизайн-система": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
             "value": "Dizayn sistemi"
-          }
-        }
-      }
-    },
-    "до %@": {
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@-dək"
           }
         }
       }
@@ -187,16 +188,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Buket rezerv edin — götürmə kodu ilə birlikdə burada görünəcək."
-          }
-        }
-      }
-    },
-    "истёк": {
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "vaxtı bitib"
           }
         }
       }
@@ -371,26 +362,6 @@
         }
       }
     },
-    "осталось %@": {
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ qalıb"
-          }
-        }
-      }
-    },
-    "осталось %lld": {
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld qalıb"
-          }
-        }
-      }
-    },
     "Осталось 3 букета": {
       "localizations": {
         "az": {
@@ -447,16 +418,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "Hələ rezerv yoxdur"
-          }
-        }
-      }
-    },
-    "получен": {
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "götürülüb"
           }
         }
       }
@@ -687,6 +648,56 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bu buket artıq sizdədir"
+          }
+        }
+      }
+    },
+    "до %@": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@-dək"
+          }
+        }
+      }
+    },
+    "истёк": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "vaxtı bitib"
+          }
+        }
+      }
+    },
+    "осталось %@": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ qalıb"
+          }
+        }
+      }
+    },
+    "осталось %lld": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%lld qalıb"
+          }
+        }
+      }
+    },
+    "получен": {
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "götürülüb"
           }
         }
       }

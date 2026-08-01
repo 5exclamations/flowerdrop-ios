@@ -7,6 +7,9 @@ struct FeedView: View {
     let isDetailShown: Bool
     let onSelect: (Bouquet) -> Void
 
+    @Environment(\.isDemoMode) private var isDemoMode
+    @Environment(\.demoModeToggle) private var demoModeToggle
+
     private let columns = [
         GridItem(.flexible(), spacing: DS.Spacing.s),
         GridItem(.flexible(), spacing: DS.Spacing.s)
@@ -32,9 +35,16 @@ struct FeedView: View {
 
     private var header: some View {
         VStack(alignment: .leading, spacing: DS.Spacing.xxs) {
-            Text(verbatim: "FlowerDrop")
-                .font(DS.Typography.display)
-                .foregroundStyle(DS.Palette.textPrimary)
+            HStack(alignment: .firstTextBaseline, spacing: DS.Spacing.xs) {
+                Text(verbatim: "FlowerDrop")
+                    .font(DS.Typography.display)
+                    .foregroundStyle(DS.Palette.textPrimary)
+                    .secretTap { demoModeToggle.toggle() }
+
+                if isDemoMode {
+                    DemoBadge()
+                }
+            }
 
             Label("Баку", systemImage: "mappin.and.ellipse")
                 .font(DS.Typography.callout)

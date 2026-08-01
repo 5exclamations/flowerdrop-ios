@@ -5,6 +5,9 @@ import SwiftUI
 struct OnboardingView: View {
     let onContinue: () -> Void
 
+    @Environment(\.isDemoMode) private var isDemoMode
+    @Environment(\.demoModeToggle) private var demoModeToggle
+
     private struct Point: Identifiable {
         let id: String
         let systemImage: String
@@ -21,12 +24,21 @@ struct OnboardingView: View {
         VStack(alignment: .leading, spacing: DS.Spacing.l) {
             Spacer(minLength: DS.Spacing.xl)
 
-            Image("LaunchMark")
-                .resizable()
-                .scaledToFit()
-                .frame(height: DS.Size.onboardingMark)
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .accessibilityHidden(true)
+            // Бейдж стоит у знака, а не у заголовка: рядом с заголовком он
+            // отнимает ширину и ломает его на две строки.
+            HStack(spacing: DS.Spacing.s) {
+                Image("LaunchMark")
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: DS.Size.onboardingMark)
+                    .accessibilityHidden(true)
+                    .secretTap { demoModeToggle.toggle() }
+
+                if isDemoMode {
+                    DemoBadge()
+                }
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             Text("Вчерашние букеты")
                 .font(DS.Typography.display)

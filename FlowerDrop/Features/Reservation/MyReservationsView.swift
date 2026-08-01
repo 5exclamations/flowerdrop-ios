@@ -4,13 +4,20 @@ import SwiftUI
 struct MyReservationsView: View {
     @Environment(ReservationStore.self) private var store
     @Environment(AuthStore.self) private var auth
+    @Environment(\.isDemoMode) private var isDemoMode
 
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DS.Spacing.m) {
-                Text("Мои резервы")
-                    .font(DS.Typography.display)
-                    .foregroundStyle(DS.Palette.textPrimary)
+                HStack(alignment: .firstTextBaseline, spacing: DS.Spacing.xs) {
+                    Text("Мои резервы")
+                        .font(DS.Typography.display)
+                        .foregroundStyle(DS.Palette.textPrimary)
+
+                    if isDemoMode {
+                        DemoBadge()
+                    }
+                }
 
                 content
             }

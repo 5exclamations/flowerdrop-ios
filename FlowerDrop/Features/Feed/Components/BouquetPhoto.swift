@@ -22,7 +22,10 @@ struct BouquetPhoto: View {
         Color.clear
             .aspectRatio(DS.Size.photoAspectRatio, contentMode: .fit)
             .overlay {
-                if let url {
+                if let url, let asset = DemoPhoto.assetName(for: url) {
+                    // Демо-режим: фото вшито в ассеты, сеть не нужна вовсе.
+                    photo(Image(asset))
+                } else if let url {
                     AsyncImage(
                         url: url,
                         transaction: Transaction(animation: DS.Motion.spring)
