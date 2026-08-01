@@ -26,6 +26,9 @@ protocol APIClient: Sendable {
     func reservations(token: String) async throws -> [Reservation]
     func reserve(bouquetID: Int, token: String) async throws -> Reservation
     func pickup(reservationID: Int, token: String) async throws -> Reservation
+
+    /// Удалить аккаунт вместе с токеном. Требование App Store 5.1.1(v).
+    func deleteAccount(token: String) async throws
 }
 
 private struct APIClientKey: EnvironmentKey {

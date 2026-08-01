@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Privacy manifest. Apple rejects a submission without one.
+
+  Two things live here and they answer different questions:
+
+    * NSPrivacyCollectedDataTypes — what leaves the device and reaches our
+      server. Phone number and reservations, both tied to the account,
+      neither used for tracking.
+    * NSPrivacyAccessedAPITypes — "required reason" APIs, the ones that could
+      be abused to fingerprint a device. We touch exactly one: UserDefaults,
+      through @AppStorage.
+
+  Not declared because we genuinely do not do it: no tracking, no tracking
+  domains, no advertising identifier, no analytics SDK, no location. The app
+  never asks for coordinates and never sends any — that is why there is no
+  NSLocation* key in Info.plist either.
+-->
+<plist version="1.0">
+<dict>
+	<key>NSPrivacyTracking</key>
+	<false/>
+	<key>NSPrivacyTrackingDomains</key>
+	<array/>
+
+	<key>NSPrivacyCollectedDataTypes</key>
+	<array>
+		<dict>
+			<!-- Sign-in identity: it is the only thing we know about a person. -->
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypePhoneNumber</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+		<dict>
+			<!--
+			  Reservations. Nothing is charged in the app — the customer pays
+			  the shop at the counter — but a reservation is still a record of
+			  what someone ordered, and "Purchase History" is the closest
+			  category Apple offers. Declaring the nearer category beats
+			  filing it under "Other" and being asked why.
+			-->
+			<key>NSPrivacyCollectedDataType</key>
+			<string>NSPrivacyCollectedDataTypePurchaseHistory</string>
+			<key>NSPrivacyCollectedDataTypeLinked</key>
+			<true/>
+			<key>NSPrivacyCollectedDataTypeTracking</key>
+			<false/>
+			<key>NSPrivacyCollectedDataTypePurposes</key>
+			<array>
+				<string>NSPrivacyCollectedDataTypePurposeAppFunctionality</string>
+			</array>
+		</dict>
+	</array>
+
+	<key>NSPrivacyAccessedAPITypes</key>
+	<array>
+		<dict>
+			<!--
+			  @AppStorage — the onboarding flag, the demo-mode flag and the
+			  last phone number typed. CA92.1 is the reason for reading and
+			  writing defaults that only this app can see; we have no App
+			  Group, so 1C8F.1 would be the wrong one.
+			-->
+			<key>NSPrivacyAccessedAPIType</key>
+			<string>NSPrivacyAccessedAPICategoryUserDefaults</string>
+			<key>NSPrivacyAccessedAPITypeReasons</key>
+			<array>
+				<string>CA92.1</string>
+			</array>
+		</dict>
+	</array>
+</dict>
+</plist>

@@ -24,8 +24,8 @@ Every authenticated request carries a static token:
 Authorization: Token 9f4c1e0b7ac2d1e35f6a8b0c2d4e6f8a1b3c5d7e
 ```
 
-The token does not expire and is not refreshed. It is invalidated by the
-server only when an account is blocked.
+The token does not expire and is not refreshed. The server invalidates it in
+two cases: the account is blocked, or the customer deletes the account.
 
 | Endpoint | Auth |
 |---|---|
@@ -36,6 +36,7 @@ server only when an account is blocked.
 | `POST /api/reservations/` | token |
 | `GET /api/reservations/` | token |
 | `POST /api/reservations/{id}/pickup` | token |
+| `DELETE /api/account` | token |
 
 The feed is open on purpose: the app shows the shop window before asking
 anyone to sign in, and asks for the phone number only at the moment of
@@ -72,7 +73,8 @@ Every non-2xx response has the same shape:
 |---|---|---|
 | 400 | `validation_error` | Malformed body or query, per-field details in `fields` |
 | 400 | `otp_invalid` | Wrong, expired, already used, or over-attempted code |
-| 401 | `not_authenticated` | Missing or unknown token |
+| 401 | `not_authenticated` | No token was sent |
+| 401 | `authentication_failed` | A token was sent but the server does not know it — including a token whose account was deleted |
 | 403 | `permission_denied` | Token is valid but the action is not allowed |
 | 403 | `account_disabled` | The account is blocked |
 | 404 | `not_found` | No such object, or not this user's object |
@@ -312,10 +314,47 @@ reservation, same shape as the list item.
 
 ---
 
+## `DELETE /api/account`
+
+Erases the signed-in customer. No body, no query, nothing to confirm — the
+app is expected to ask the question in its own UI before calling this.
+
+Required by App Store guideline 5.1.1(v): an app that creates accounts has to
+let a customer delete one from inside the app.
+
+**204** — no content. From this moment the token is dead.
+**401** — no token, or a token the server no longer knows. A second call with
+the same token lands here.
+
+What the server does, in one transaction:
+
+| | |
+|---|---|
+| Account and phone number | deleted |
+| Token | deleted — every device signed in with it is signed out |
+| One-time codes for the number | deleted |
+| Reservations still active | cancelled, and the bouquet goes back on sale |
+| Past reservations | kept, with `user` cleared |
+
+The last row is the one to be careful about. A reservation is also the shop's
+record of a sale: bouquet, price, dates and outcome stay so the shop's
+statistics for a past day do not change because a customer left. What goes is
+the link to the person — the rows have no owner afterwards and no endpoint can
+return them, because every reservation endpoint filters by the caller.
+
+Cancelled holds get `status: "cancelled"`, a status that exists only in the
+database. The client never receives it: the only rows carrying it belong to a
+deleted account.
+
+Signing up again with the same number produces a new, empty account.
+
+---
+
 ## Notes for the client
 
 - Trailing slashes matter. `/api/bouquets/` and `/api/reservations/` have one;
-  `/api/auth/otp/request`, `/api/auth/otp/verify` and `.../pickup` do not.
+  `/api/auth/otp/request`, `/api/auth/otp/verify`, `/api/account` and
+  `.../pickup` do not.
 - Nothing is paginated in v1. When it becomes necessary the list endpoints
   will switch to `{"results": [...], "next": ...}` under a new version prefix,
   not silently.

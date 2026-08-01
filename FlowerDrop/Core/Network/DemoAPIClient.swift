@@ -106,6 +106,22 @@ actor DemoAPIClient: APIClient {
         return picked
     }
 
+    // MARK: - Аккаунт
+
+    /// Удаление имитируется: на показе нечего удалять на сервере, но зритель
+    /// должен увидеть тот же результат — брони исчезли, остаток вернулся.
+    func deleteAccount(token: String) async throws {
+        try await pause()
+        try check(token)
+        for reservation in reservations where reservation.status == .active {
+            if let index = catalogue.firstIndex(where: { $0.id == reservation.bouquet.id }) {
+                let bouquet = catalogue[index]
+                catalogue[index] = bouquet.withQuantityLeft(bouquet.quantityLeft + 1)
+            }
+        }
+        reservations.removeAll()
+    }
+
     // MARK: - Служебное
 
     private func check(_ token: String) throws {

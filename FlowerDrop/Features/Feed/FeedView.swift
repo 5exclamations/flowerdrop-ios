@@ -9,6 +9,9 @@ struct FeedView: View {
 
     @Environment(\.isDemoMode) private var isDemoMode
     @Environment(\.demoModeToggle) private var demoModeToggle
+    @Environment(AuthStore.self) private var auth
+
+    @State private var isProfileShown = false
 
     private let columns = [
         GridItem(.flexible(), spacing: DS.Spacing.s),
@@ -29,6 +32,21 @@ struct FeedView: View {
         .refreshable { await viewModel.refresh() }
         .task { await viewModel.load() }
         .animation(DS.Motion.spring, value: viewModel.state)
+        .sheet(isPresented: $isProfileShown) { ProfileView() }
+    }
+
+    private var profileButton: some View {
+        Button {
+            isProfileShown = true
+        } label: {
+            Image(systemName: "person.crop.circle")
+                .font(DS.Typography.title)
+                .foregroundStyle(DS.Palette.accent)
+                .frame(width: DS.Size.minTapTarget, height: DS.Size.minTapTarget)
+                .contentShape(.rect)
+        }
+        .buttonStyle(.pressable)
+        .accessibilityLabel(Text("Профиль"))
     }
 
     // MARK: - Шапка
@@ -43,6 +61,14 @@ struct FeedView: View {
 
                 if isDemoMode {
                     DemoBadge()
+                }
+
+                Spacer(minLength: DS.Spacing.xs)
+
+                // Профиль появляется только после входа: до него там нечего
+                // показывать, а удалять — тем более нечего.
+                if auth.isSignedIn {
+                    profileButton
                 }
             }
 

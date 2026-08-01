@@ -63,6 +63,15 @@ struct RealAPIClient: APIClient {
         return dto.model
     }
 
+    // MARK: - Аккаунт
+
+    func deleteAccount(token: String) async throws {
+        // Без слеша на конце — см. API_CONTRACT.md.
+        var request = URLRequest(url: baseURL.appending(path: "api/account"))
+        request.httpMethod = "DELETE"
+        try await send(request, token: token)
+    }
+
     // MARK: - Транспорт
 
     private func get<Response: Decodable>(
@@ -90,6 +99,20 @@ struct RealAPIClient: APIClient {
         _ request: URLRequest,
         token: String?
     ) async throws -> Response {
+        let data = try await perform(request, token: token)
+        do {
+            return try Self.decoder.decode(Response.self, from: data)
+        } catch {
+            throw APIError.decoding
+        }
+    }
+
+    /// Тело ответа не нужно: 204 у него пустое, а декодер на пустоте падает.
+    private func send(_ request: URLRequest, token: String?) async throws {
+        _ = try await perform(request, token: token)
+    }
+
+    private func perform(_ request: URLRequest, token: String?) async throws -> Data {
         var request = request
         if let token {
             request.setValue("Token \(token)", forHTTPHeaderField: "Authorization")
@@ -118,11 +141,7 @@ struct RealAPIClient: APIClient {
             )
         }
 
-        do {
-            return try Self.decoder.decode(Response.self, from: data)
-        } catch {
-            throw APIError.decoding
-        }
+        return data
     }
 
     private static let decoder: JSONDecoder = {

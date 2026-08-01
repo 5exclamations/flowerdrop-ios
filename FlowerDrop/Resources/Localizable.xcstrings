@@ -91,6 +91,17 @@
         }
       }
     },
+    "Выйти": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Çıxış"
+          }
+        }
+      }
+    },
     "Демо-режим": {
       "extractionState": "manual",
       "localizations": {
@@ -342,6 +353,17 @@
         }
       }
     },
+    "Не удалось удалить аккаунт": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hesabı silmək alınmadı"
+          }
+        }
+      }
+    },
     "Неверный код": {
       "localizations": {
         "az": {
@@ -362,12 +384,56 @@
         }
       }
     },
+    "Нет связи с сервером. Проверьте соединение.": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Serverlə əlaqə yoxdur. Bağlantını yoxlayın."
+          }
+        }
+      }
+    },
+    "Номер": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nömrə"
+          }
+        }
+      }
+    },
+    "Номер и активные резервы будут удалены без возможности восстановить. Букеты, которые вы держите, вернутся в продажу.": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nömrə və aktiv rezervlər bərpasız silinəcək. Saxladığınız buketlər yenidən satışa qayıdacaq."
+          }
+        }
+      }
+    },
     "Осталось 3 букета": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
             "value": "3 buket qalıb"
+          }
+        }
+      }
+    },
+    "Отмена": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ləğv et"
           }
         }
       }
@@ -422,6 +488,17 @@
         }
       }
     },
+    "Политика конфиденциальности": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Məxfilik siyasəti"
+          }
+        }
+      }
+    },
     "Получить код": {
       "localizations": {
         "az": {
@@ -468,6 +545,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "İnternet bağlantısını yoxlayın və yenidən cəhd edin."
+          }
+        }
+      }
+    },
+    "Профиль": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Profil"
           }
         }
       }
@@ -552,6 +640,17 @@
         }
       }
     },
+    "Сессия истекла. Войдите заново.": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Sessiyanın vaxtı bitdi. Yenidən daxil olun."
+          }
+        }
+      }
+    },
     "Скелетоны": {
       "localizations": {
         "az": {
@@ -612,6 +711,50 @@
         }
       }
     },
+    "Удаление необратимо. История резервов останется у лавки обезличенной.": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Silmək geri qaytarılmır. Rezerv tarixçəsi dükanda adsız qalacaq."
+          }
+        }
+      }
+    },
+    "Удалить аккаунт": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hesabı sil"
+          }
+        }
+      }
+    },
+    "Удалить аккаунт?": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Hesab silinsin?"
+          }
+        }
+      }
+    },
+    "Условия использования": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "İstifadə şərtləri"
+          }
+        }
+      }
+    },
     "Цвета": {
       "localizations": {
         "az": {
@@ -638,6 +781,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Qiymətlər"
+          }
+        }
+      }
+    },
+    "Что-то пошло не так. Попробуйте ещё раз.": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nəsə alınmadı. Bir daha yoxlayın."
           }
         }
       }

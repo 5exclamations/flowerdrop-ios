@@ -40,9 +40,14 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.0</string>
+	<string>1.0.0</string>
 	<key>CFBundleVersion</key>
 	<string>1</string>
+	<!-- Только системный HTTPS: освобождённое использование шифрования,
+	     иначе App Store Connect спрашивает про экспортное соответствие
+	     на каждой сборке. -->
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 	<!-- Launch screen без сториборда: фон и знак берутся из каталога ассетов. -->
 	<key>UILaunchScreen</key>
 	<dict>

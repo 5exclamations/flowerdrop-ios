@@ -56,6 +56,10 @@ struct MockAPIClient: APIClient {
         return Self.reservation
     }
 
+    func deleteAccount(token: String) async throws {
+        try await pause()
+    }
+
     private func pause() async throws {
         guard latency > .zero else { return }
         try await Task.sleep(for: latency)

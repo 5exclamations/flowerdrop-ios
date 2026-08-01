@@ -9,7 +9,11 @@ import SwiftUI
 /// при выходе из демо.
 struct RootView: View {
     @AppStorage(DemoMode.storageKey) private var isDemoMode = false
+    @AppStorage(AppScene.onboardingKey) private var hasSeenOnboarding = false
     @State private var demoClient = DemoAPIClient()
+    /// Меняется, когда сцену надо собрать заново, не меняя режим, — сейчас
+    /// это единственный случай: после удаления аккаунта.
+    @State private var sessionID = UUID()
 
     private let liveClient: any APIClient
 
@@ -17,14 +21,19 @@ struct RootView: View {
         self.liveClient = client
     }
 
+    private var authNamespace: String {
+        isDemoMode ? DemoMode.authNamespace : ""
+    }
+
     var body: some View {
         AppScene(
             client: isDemoMode ? demoClient : liveClient,
-            authNamespace: isDemoMode ? DemoMode.authNamespace : ""
+            authNamespace: authNamespace
         )
-        .id(isDemoMode)
+        .id(SceneIdentity(isDemoMode: isDemoMode, session: sessionID))
         .environment(\.isDemoMode, isDemoMode)
         .environment(\.demoModeToggle, DemoModeToggle(toggle: toggleDemoMode))
+        .environment(\.appSessionReset, AppSessionReset(reset: resetToOnboarding))
     }
 
     /// Демо всегда начинается с чистого листа: новый клиент — значит пустые
@@ -34,11 +43,53 @@ struct RootView: View {
         demoClient = DemoAPIClient()
         withAnimation(DS.Motion.spring) { isDemoMode.toggle() }
     }
+
+    /// После удаления аккаунта приложение обязано выглядеть как только что
+    /// установленное: ни токена, ни номера, ни пройденного знакомства.
+    private func resetToOnboarding() {
+        AuthStore.clear(namespace: authNamespace)
+        if isDemoMode {
+            demoClient = DemoAPIClient()
+        }
+        withAnimation(DS.Motion.spring) {
+            hasSeenOnboarding = false
+            sessionID = UUID()
+        }
+    }
+}
+
+/// Пара «режим + сессия»: смена любого из двух пересобирает сцену вместе
+/// со всеми сторами, которые получили клиента в `init`.
+private struct SceneIdentity: Hashable {
+    let isDemoMode: Bool
+    let session: UUID
+}
+
+/// Полный сброс приложения к экрану знакомства. В окружении, потому что
+/// просит его экран профиля, лежащий на несколько уровней ниже.
+struct AppSessionReset {
+    let reset: () -> Void
+
+    static let inactive = AppSessionReset {}
+}
+
+private struct AppSessionResetKey: EnvironmentKey {
+    static let defaultValue = AppSessionReset.inactive
+}
+
+extension EnvironmentValues {
+    var appSessionReset: AppSessionReset {
+        get { self[AppSessionResetKey.self] }
+        set { self[AppSessionResetKey.self] = newValue }
+    }
 }
 
 /// Две вкладки, а поверх них — экран букета: лента и деталь обязаны жить
 /// в одном стеке, иначе фотография не перелетит из карточки.
 private struct AppScene: View {
+    /// Один ключ на два места: сцена его читает, корень — сбрасывает.
+    static let onboardingKey = "onboarding.seen"
+
     @State private var feed: FeedViewModel
     @State private var auth: AuthStore
     @State private var reservations: ReservationStore
@@ -46,7 +97,7 @@ private struct AppScene: View {
     @State private var selected: Bouquet?
     @Namespace private var hero
     /// Экран знакомства показывается один раз за установку.
-    @AppStorage("onboarding.seen") private var hasSeenOnboarding = false
+    @AppStorage(AppScene.onboardingKey) private var hasSeenOnboarding = false
 
     private let client: any APIClient
 
