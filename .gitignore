@@ -18,3 +18,8 @@ build/
 
 ## Локальные артефакты Claude Code
 .claude/
+
+## Brand kit Google целиком: скачанный набор с вариантами под Android и веб.
+## В репозиторий идут только две картинки, которые реально нужны, — они
+## лежат в Assets.xcassets/GoogleSignInButton.imageset.
+/signin-assets/
