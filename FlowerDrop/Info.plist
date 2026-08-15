@@ -3,8 +3,15 @@
 <!-- Release. Никаких исключений ATS: боевой хост только по HTTPS. -->
 <plist version="1.0">
 <dict>
+	<!--
+	  Боевой адрес. Пока это поддомен хостинга: своего домена нет, а
+	  api.flowerdrop.az стоял здесь авансом и указывал в никуда — релизная
+	  сборка с ним не нашла бы бэкенд.
+	  Когда домен появится, поменять надо ровно эту строку и привязать домен
+	  на стороне хостинга; ATS-исключений тут нет и не нужно — HTTPS.
+	-->
 	<key>APIBaseURL</key>
-	<string>https://api.flowerdrop.az</string>
+	<string>https://flowerdrop-backend.onrender.com</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
