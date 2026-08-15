@@ -76,35 +76,42 @@ struct SignInView: View {
         .disabled(busy != nil)
     }
 
-    /// Официальная кнопка Google из их brand kit, светлая и тёмная версии
-    /// в одном ассете. Собственную кнопку с их знаком делать не стали:
-    /// готовая снимает любой вопрос к оформлению на ревью.
+    /// Своя кнопка со знаком Google — второй путь, который их гайдлайны
+    /// разрешают наравне с готовой картинкой: логотип берётся нетронутым,
+    /// подпись своя и на языке интерфейса.
     ///
-    /// Подпись на ней английская — локализованных вариантов Google в наборе
-    /// не даёт, и рисовать свою надпись их шрифтом нельзя. Рядом стоит
-    /// кнопка Apple, которую система переводит сама, так что языки на этом
-    /// экране расходятся: это осознанный размен в пользу соответствия
-    /// чужим гайдлайнам.
+    /// Пошли по нему ради одной вещи: готовая кнопка имеет жёсткие
+    /// пропорции 564×132 и на всю ширину не растягивается — рядом с
+    /// кнопкой Apple она выглядела заметно мельче, а растянуть её значит
+    /// исказить логотип, чего гайдлайны прямо запрещают. Здесь обе кнопки
+    /// одной ширины и одной высоты.
+    ///
+    /// Сам знак вырезан из их SVG вместе с подложкой-плашкой: сам логотип
+    /// не изменён ни на пиксель, убран только контейнер, который в нашей
+    /// кнопке был бы карточкой внутри карточки.
     private var googleButton: some View {
         Button {
             start(.google)
         } label: {
-            ZStack {
-                Image("GoogleSignInButton")
-                    .resizable()
-                    .scaledToFit()
-                    .opacity(busy == .google ? DS.Opacity.medium : 1)
-
+            HStack(spacing: DS.Spacing.xs) {
                 if busy == .google {
                     ProgressView().tint(DS.Palette.textPrimary)
+                } else {
+                    Image("GoogleMark")
+                        .resizable()
+                        .scaledToFit()
+                        .frame(width: DS.Size.providerMark, height: DS.Size.providerMark)
                 }
+                Text("Войти через Google")
             }
-            .frame(height: DS.Size.control)
+            .font(DS.Typography.bodyEmphasized)
+            .foregroundStyle(DS.Palette.textPrimary)
             .frame(maxWidth: .infinity)
+            .frame(height: DS.Size.control)
+            .background(DS.Palette.surface, in: DS.Radius.shape)
             .contentShape(.rect)
         }
         .buttonStyle(.pressable)
-        .accessibilityLabel(Text("Войти через Google"))
     }
 
     private var closeButton: some View {
