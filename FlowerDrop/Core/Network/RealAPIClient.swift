@@ -1,7 +1,7 @@
 import Foundation
 
 /// Клиент реального бэкенда. Слеши в путях важны: у списков они есть,
-/// у `otp/*` и `pickup` — нет (см. API_CONTRACT.md).
+/// у `auth/*`, `account` и `pickup` — нет (см. API_CONTRACT.md).
 struct RealAPIClient: APIClient {
     let baseURL: URL
     let session: URLSession
@@ -25,17 +25,28 @@ struct RealAPIClient: APIClient {
 
     // MARK: - Вход
 
-    func requestCode(phone: String) async throws -> OTPChallenge {
-        let dto: OTPRequestDTO = try await post("api/auth/otp/request", body: ["phone": phone])
-        return OTPChallenge(phone: dto.phone, expiresIn: dto.expiresIn, debugCode: dto.debugCode)
+    func signIn(
+        provider: AuthProvider,
+        identityToken: String,
+        name: String
+    ) async throws -> AuthSession {
+        // Провайдер в пути, а не в теле — так решил контракт: клиент не
+        // может попросить проверить токен чужими ключами.
+        let dto: SignInDTO = try await post(
+            "api/auth/\(provider.rawValue)",
+            body: ["identity_token": identityToken, "name": name]
+        )
+        return dto.session
     }
 
-    func verifyCode(phone: String, code: String) async throws -> AuthSession {
-        let dto: VerifyDTO = try await post(
-            "api/auth/otp/verify",
-            body: ["phone": phone, "code": code]
-        )
-        return AuthSession(token: dto.token, phone: dto.user.phone)
+    func updatePhone(_ phone: String, token: String) async throws -> AuthSession {
+        var request = URLRequest(url: baseURL.appending(path: "api/account"))
+        request.httpMethod = "PATCH"
+        request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        request.httpBody = try JSONEncoder().encode(["phone": phone])
+        let dto: UserDTO = try await send(request, token: token)
+        // Токен не меняется — сервер вернул только профиль.
+        return AuthSession(token: token, phone: dto.phone, email: dto.email, name: dto.name)
     }
 
     // MARK: - Резервы
@@ -153,6 +164,21 @@ struct RealAPIClient: APIClient {
 
 // MARK: - DTO
 
+private struct UserDTO: Decodable {
+    let phone: String?
+    let email: String
+    let name: String
+}
+
+private struct SignInDTO: Decodable {
+    let token: String
+    let user: UserDTO
+
+    var session: AuthSession {
+        AuthSession(token: token, phone: user.phone, email: user.email, name: user.name)
+    }
+}
+
 private struct ErrorEnvelopeDTO: Decodable {
     struct Payload: Decodable {
         let code: String
@@ -160,26 +186,6 @@ private struct ErrorEnvelopeDTO: Decodable {
         let fields: [String: [String]]?
     }
     let error: Payload
-}
-
-private struct OTPRequestDTO: Decodable {
-    let phone: String
-    let expiresIn: Int
-    let debugCode: String?
-
-    enum CodingKeys: String, CodingKey {
-        case phone
-        case expiresIn = "expires_in"
-        case debugCode = "debug_code"
-    }
-}
-
-private struct VerifyDTO: Decodable {
-    struct User: Decodable {
-        let phone: String
-    }
-    let token: String
-    let user: User
 }
 
 private struct ShopDTO: Decodable {

@@ -20,6 +20,19 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>GoogleClientID</key>
+	<string>400664300321-45uir9k7j16a11j4051mgs6i08cji6e5.apps.googleusercontent.com</string>
+	<!-- Обратный client id как схема — так Google возвращает управление
+	     в приложение после входа. Другого назначения у этой схемы нет. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.400664300321-45uir9k7j16a11j4051mgs6i08cji6e5</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

@@ -85,7 +85,7 @@ struct BouquetDetailView: View {
         .fullScreenCover(item: $presented, onDismiss: continueAfterAuth) { presentation in
             switch presentation {
             case .auth:
-                AuthFlowView()
+                SignInView()
             case .success(let reservation):
                 ReservationSuccessView(reservation: reservation) {
                     presented = nil

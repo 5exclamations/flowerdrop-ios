@@ -12,6 +12,9 @@ struct ProfileView: View {
     @Environment(\.appSessionReset) private var sessionReset
     @Environment(\.dismiss) private var dismiss
 
+    @State private var phoneDraft = ""
+    @State private var isSavingPhone = false
+    @State private var phoneError: LocalizedStringKey?
     @State private var isConfirmingDeletion = false
     @State private var isDeleting = false
     @State private var failure: String?
@@ -89,24 +92,74 @@ struct ProfileView: View {
     // MARK: - Секции
 
     private var account: some View {
-        VStack(alignment: .leading, spacing: DS.Spacing.xs) {
-            Text("Номер")
-                .font(DS.Typography.caption)
-                .foregroundStyle(DS.Palette.textSecondary)
-
+        VStack(alignment: .leading, spacing: DS.Spacing.s) {
             HStack(spacing: DS.Spacing.xs) {
-                Text(verbatim: auth.formattedPhone)
-                    .font(DS.Typography.title)
-                    .foregroundStyle(DS.Palette.textPrimary)
-                    .monospacedDigit()
+                Text("Телефон для лавки")
+                    .font(DS.Typography.caption)
+                    .foregroundStyle(DS.Palette.textSecondary)
 
                 if isDemoMode {
                     DemoBadge()
                 }
             }
+
+            // Номер больше не логин: без него вход работает, и это просто
+            // способ дать лавке дозвониться.
+            HStack(spacing: DS.Spacing.xs) {
+                Text(verbatim: AuthStore.countryCode)
+                    .font(DS.Typography.title)
+                    .foregroundStyle(DS.Palette.textSecondary)
+
+                TextField("Не указан", text: $phoneDraft)
+                    .font(DS.Typography.title)
+                    .monospacedDigit()
+                    .foregroundStyle(DS.Palette.textPrimary)
+                    .keyboardType(.numberPad)
+                    .textContentType(.telephoneNumber)
+
+                if isSavingPhone {
+                    ProgressView().tint(DS.Palette.accent)
+                } else if phoneDraft != savedDigits {
+                    Button("Сохранить") { savePhone() }
+                        .font(DS.Typography.bodyEmphasized)
+                        .foregroundStyle(DS.Palette.accent)
+                        .buttonStyle(.pressable)
+                }
+            }
+
+            if let phoneError {
+                Text(phoneError)
+                    .font(DS.Typography.caption)
+                    .foregroundStyle(DS.Palette.accentSecondary)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .dsCard()
+        .onAppear { phoneDraft = savedDigits }
+    }
+
+    /// Хранимый номер без кода страны — с ним сравниваем черновик.
+    private var savedDigits: String {
+        guard let phone = auth.phone, phone.hasPrefix(AuthStore.countryCode) else { return "" }
+        return String(phone.dropFirst(AuthStore.countryCode.count))
+    }
+
+    private func savePhone() {
+        isSavingPhone = true
+        phoneError = nil
+        Task {
+            do {
+                try await auth.updatePhone(phoneDraft.isEmpty ? "" : AuthStore.countryCode + phoneDraft)
+                phoneDraft = savedDigits
+            } catch let error as APIError where error == .phoneTaken {
+                phoneError = "Этот номер уже указан в другом аккаунте."
+            } catch let error as APIError where error == .unreachable {
+                phoneError = "Нет связи с сервером. Проверьте соединение."
+            } catch {
+                phoneError = "Номер не подошёл. Проверьте его и попробуйте ещё раз."
+            }
+            isSavingPhone = false
+        }
     }
 
     private var legal: some View {

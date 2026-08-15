@@ -22,6 +22,13 @@ targets:
         excludes:
           - "Info.plist"
           - "Info-Debug.plist"
+    entitlements:
+      path: FlowerDrop/FlowerDrop.entitlements
+      properties:
+        # Вход через Apple. Без этого права кнопка на устройстве отвечает
+        # ошибкой авторизации, а не входом.
+        com.apple.developer.applesignin:
+          - Default
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: com.texa.flowerdrop

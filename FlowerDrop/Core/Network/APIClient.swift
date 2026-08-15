@@ -1,17 +1,19 @@
 import SwiftUI
 
-/// Ответ на запрос кода: сервер нормализует номер и говорит, сколько
-/// код живёт. `debugCode` приходит только из dev-сборки бэкенда.
-struct OTPChallenge: Hashable {
-    let phone: String
-    let expiresIn: Int
-    let debugCode: String?
+/// Кто подтвердил личность. Значение уходит в путь запроса, поэтому
+/// совпадает с тем, что ждёт бэкенд.
+enum AuthProvider: String, Sendable {
+    case apple
+    case google
 }
 
-/// Успешный вход: токен и профиль.
+/// Успешный вход: токен и профиль. Телефон теперь необязателен — это
+/// контакт для лавки, а не способ войти.
 struct AuthSession: Hashable {
     let token: String
-    let phone: String
+    let phone: String?
+    let email: String
+    let name: String
 }
 
 /// Контракт бэкенда. Экраны знают только его — за ним стоит либо сеть,
@@ -20,8 +22,15 @@ protocol APIClient: Sendable {
     func bouquets() async throws -> [Bouquet]
     func bouquet(id: Int) async throws -> Bouquet
 
-    func requestCode(phone: String) async throws -> OTPChallenge
-    func verifyCode(phone: String, code: String) async throws -> AuthSession
+    /// Обменять identity-токен провайдера на наш. Подпись проверяет сервер.
+    func signIn(
+        provider: AuthProvider,
+        identityToken: String,
+        name: String
+    ) async throws -> AuthSession
+
+    /// Телефон как контакт: пустая строка стирает его.
+    func updatePhone(_ phone: String, token: String) async throws -> AuthSession
 
     func reservations(token: String) async throws -> [Reservation]
     func reserve(bouquetID: Int, token: String) async throws -> Reservation

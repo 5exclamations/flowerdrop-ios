@@ -11,8 +11,10 @@ enum APIError: Error, Equatable {
     case alreadyReserved
     case alreadyPickedUp
     case reservationExpired
-    case otpInvalid
-    case otpCooldown
+    /// Провайдер не подтвердил личность: подпись, аудитория, срок.
+    case socialInvalid
+    /// Этот номер уже указан другим аккаунтом.
+    case phoneTaken
     case throttled
     case notAuthenticated
     case accountDisabled
@@ -29,8 +31,8 @@ enum APIError: Error, Equatable {
         case (409, "already_reserved"): self = .alreadyReserved
         case (409, "already_picked_up"): self = .alreadyPickedUp
         case (409, "reservation_expired"): self = .reservationExpired
-        case (400, "otp_invalid"): self = .otpInvalid
-        case (429, "otp_cooldown"): self = .otpCooldown
+        case (401, "social_invalid"): self = .socialInvalid
+        case (409, "phone_taken"): self = .phoneTaken
         case (429, _): self = .throttled
         case (401, _): self = .notAuthenticated
         case (403, "account_disabled"): self = .accountDisabled

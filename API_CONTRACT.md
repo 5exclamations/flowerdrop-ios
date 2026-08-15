@@ -15,8 +15,10 @@ The iOS client is the only consumer today.
 
 ## Authentication
 
-Sign-in is a two-step one-time password on a phone number. There are no
-passwords and no e-mail anywhere.
+Sign-in is Apple or Google. The app runs the provider's flow and exchanges the
+resulting identity token for ours; the server verifies that token against the
+provider's published keys. There are no passwords in this API, and no codes by
+SMS.
 
 Every authenticated request carries a static token:
 
@@ -29,24 +31,26 @@ two cases: the account is blocked, or the customer deletes the account.
 
 | Endpoint | Auth |
 |---|---|
-| `POST /api/auth/otp/request` | none |
-| `POST /api/auth/otp/verify` | none |
+| `POST /api/auth/apple` | none |
+| `POST /api/auth/google` | none |
 | `GET /api/bouquets/` | none |
 | `GET /api/bouquets/{id}/` | none |
 | `POST /api/reservations/` | token |
 | `GET /api/reservations/` | token |
 | `POST /api/reservations/{id}/pickup` | token |
+| `PATCH /api/account` | token |
 | `DELETE /api/account` | token |
 
 The feed is open on purpose: the app shows the shop window before asking
-anyone to sign in, and asks for the phone number only at the moment of
-reserving.
+anyone to sign in, and asks only at the moment of reserving.
 
 ### Phone format
 
-Any of `+994501112233`, `994 50 111 22 33`, `0501112233`, `501112233` is
-accepted; the server normalises to `+994501112233` and returns that form.
-Only Azerbaijani mobile prefixes (`10 50 51 55 60 70 77 99`) pass validation.
+The phone is a contact detail, not a credential — a customer may never set one.
+Where it is accepted, any of `+994501112233`, `994 50 111 22 33`, `0501112233`,
+`501112233` works; the server normalises to `+994501112233` and returns that
+form. Only Azerbaijani mobile prefixes (`10 50 51 55 60 70 77 99`) pass
+validation, and `phone` is `null` on an account that has none.
 
 ---
 
@@ -57,8 +61,8 @@ Every non-2xx response has the same shape:
 ```json
 {
   "error": {
-    "code": "otp_invalid",
-    "message": "Wrong code.",
+    "code": "validation_error",
+    "message": "Enter an Azerbaijani mobile number.",
     "fields": {"phone": ["Enter an Azerbaijani mobile number."]}
   }
 }
@@ -72,7 +76,8 @@ Every non-2xx response has the same shape:
 | HTTP | `code` | When |
 |---|---|---|
 | 400 | `validation_error` | Malformed body or query, per-field details in `fields` |
-| 400 | `otp_invalid` | Wrong, expired, already used, or over-attempted code |
+
+| 401 | `social_invalid` | The provider's identity token did not verify |
 | 401 | `not_authenticated` | No token was sent |
 | 401 | `authentication_failed` | A token was sent but the server does not know it — including a token whose account was deleted |
 | 403 | `permission_denied` | Token is valid but the action is not allowed |
@@ -83,7 +88,7 @@ Every non-2xx response has the same shape:
 | 409 | `already_reserved` | This user already holds this bouquet |
 | 409 | `already_picked_up` | The reservation was already collected |
 | 409 | `reservation_expired` | The hold ran out before pickup |
-| 429 | `otp_cooldown` | A new code was requested too soon for this number |
+| 409 | `phone_taken` | Another account already lists this number |
 | 429 | `throttled` | Too many requests from this IP |
 
 `404` and `409` on a reservation say different things and the client should
@@ -96,24 +101,57 @@ API does not confirm that someone else's reservation exists.
 
 ---
 
-## `POST /api/auth/otp/request`
+## `POST /api/auth/apple` and `POST /api/auth/google`
 
-Sends a four-digit code by SMS. Three independent limits apply:
+Sign-in. The app runs the provider's own flow — Sign in with Apple, or Google
+through a web authentication session — and posts the resulting identity token
+here. There is no password anywhere in this API and no code by SMS.
 
-| Limit | Scope | On breach |
-|---|---|---|
-| 1 code per 60s | per phone number | `429 otp_cooldown` |
-| 10 codes per hour | per IP | `429 throttled` |
-| 5 wrong guesses | per issued code | `400 otp_invalid` |
+**Request**
 
-`/verify` carries its own per-IP limit of 20 per hour, also `429 throttled`.
-The per-phone cooldown alone would not stop anyone cycling through numbers,
-which is why the per-IP limits exist as well.
+```json
+{"identity_token": "eyJraWQiOi...", "name": "Пётр"}
+```
 
-**In development the code is always `1111`** — no gateway, no log-reading, the
-simulator can just sign in. That is pinned in `config/settings/dev.py` and
-hard-disabled in `prod.py`; no environment variable can turn it on in
-production.
+`name` is optional and only Apple ever supplies it, on the first authorisation
+and never again. It is a nicety for the greeting, never an identity.
+
+**201** — a new account was created.
+**200** — an existing account signed in. Body is the same either way:
+
+```json
+{
+  "token": "9f4c1e0b7ac2d1e35f6a8b0c2d4e6f8a1b3c5d7e",
+  "user": {"id": 12, "phone": null, "email": "petya@example.com", "name": ""}
+}
+```
+
+**401** `social_invalid` — the token did not verify. One code for every
+reason: bad signature, wrong audience, wrong issuer, expired, malformed, or a
+provider this deployment has not been configured for. The server knows which;
+the client is told only that sign-in failed, because a precise answer is a
+hint to whoever is probing.
+**403** `account_disabled` — the account is blocked.
+**429** `throttled` — too many attempts from this IP.
+
+The server verifies the token itself against the provider's published keys —
+signature, issuer, and the audience, which must be this app. A token minted
+for a different app verifies against the same keys and is refused on audience
+alone.
+
+Identity is the provider's `sub` claim, never the e-mail address. An address
+is an attribute: Apple returns a private relay by default, and both providers
+may change it. One consequence is worth knowing: if the same **verified**
+address arrives from the other provider, both land on the same account, so a
+customer who used Apple in June and Google in July keeps one history.
+
+---
+
+## `PATCH /api/account`
+
+Sets or clears the contact phone number. Since sign-in moved to Apple and
+Google, the number is not a credential — it is what a shop calls when a pickup
+needs a word, and it is optional.
 
 **Request**
 
@@ -121,47 +159,12 @@ production.
 {"phone": "0501112233"}
 ```
 
-**200**
+An empty string clears it. Any format the keypad produces is accepted and
+normalised to `+994501112233`.
 
-```json
-{"phone": "+994501112233", "expires_in": 300}
-```
-
-`expires_in` is seconds. In development builds the response also carries
-`"debug_code": "4821"`, because the SMS gateway is not wired up yet. It is
-never present when `DEBUG` is off.
-
-**429**
-
-```json
-{"error": {"code": "otp_cooldown", "message": "Wait 43s before requesting a new code."}}
-```
-
----
-
-## `POST /api/auth/otp/verify`
-
-Exchanges a valid code for a token. The account is created on first successful
-verification — there is no separate sign-up.
-
-**Request**
-
-```json
-{"phone": "0501112233", "code": "4821"}
-```
-
-**200**
-
-```json
-{
-  "token": "9f4c1e0b7ac2d1e35f6a8b0c2d4e6f8a1b3c5d7e",
-  "user": {"id": 12, "phone": "+994501112233", "name": ""}
-}
-```
-
-**400** — `otp_invalid`. The same code is returned for a wrong code, an expired
-code, a code that was already used, and a code that ran out of attempts (5).
-The client shows one message and offers to resend.
+**200** — the updated user object.
+**400** `validation_error` — not an Azerbaijani mobile number.
+**409** `phone_taken` — another account already lists this number.
 
 ---
 
@@ -204,9 +207,24 @@ ascending.
 ]
 ```
 
-`photo_url` is absolute. It points at this server's media storage when the
-shop uploaded a photo, and at the shop's own CDN otherwise; it is an empty
-string only if a shop published a bouquet without any image.
+`photo_url` is absolute, and the field never changes shape: one string, or an
+empty one when a shop published a bouquet without any image.
+
+What it points at can change from one deployment to the next, and a client
+must not care. When a bouquet carries an external photo URL, that URL is
+returned — even if a file was also uploaded. Only when there is no external
+URL does the answer point at this server's own media storage.
+
+The order is that way round because of where the server runs: the container
+has an ephemeral disk, wiped on every deploy, so an uploaded file is the
+source that can disappear and a link is the one that survives. On such a host
+the catalogue is seeded with `seed_demo --external`, which downloads nothing
+and stores the image URLs.
+
+The practical consequence for the client: `photo_url` may be on a completely
+different host from the API, and it may change host between releases. Load it
+as an opaque URL — no assumptions about the origin, and no certificate
+pinning to the API's domain.
 
 `discount_percent` is the rounded whole percent, so the client does not have
 to compute it — but it is derived from `price_old` and `price_new` and can be
@@ -353,8 +371,8 @@ Signing up again with the same number produces a new, empty account.
 ## Notes for the client
 
 - Trailing slashes matter. `/api/bouquets/` and `/api/reservations/` have one;
-  `/api/auth/otp/request`, `/api/auth/otp/verify`, `/api/account` and
-  `.../pickup` do not.
+  `/api/auth/apple`, `/api/auth/google`, `/api/account` and `.../pickup`
+  do not.
 - Nothing is paginated in v1. When it becomes necessary the list endpoints
   will switch to `{"results": [...], "next": ...}` under a new version prefix,
   not silently.

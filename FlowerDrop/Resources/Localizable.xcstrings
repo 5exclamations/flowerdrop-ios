@@ -61,12 +61,46 @@
         }
       }
     },
-    "Вход по номеру": {
+    "Войти не удалось. Попробуйте ещё раз.": {
+      "extractionState": "manual",
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
-            "value": "Nömrə ilə giriş"
+            "value": "Daxil olmaq alınmadı. Bir daha yoxlayın."
+          }
+        }
+      }
+    },
+    "Войти через Google": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Google ilə daxil ol"
+          }
+        }
+      }
+    },
+    "Вход": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Giriş"
+          }
+        }
+      }
+    },
+    "Вход через Google не настроен в этой сборке.": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu buraxılışda Google girişi qurulmayıb."
           }
         }
       }
@@ -233,16 +267,6 @@
         }
       }
     },
-    "Код из SMS": {
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SMS kodu"
-          }
-        }
-      }
-    },
     "Код получения": {
       "localizations": {
         "az": {
@@ -364,6 +388,17 @@
         }
       }
     },
+    "Не указан": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Göstərilməyib"
+          }
+        }
+      }
+    },
     "Неверный код": {
       "localizations": {
         "az": {
@@ -395,17 +430,6 @@
         }
       }
     },
-    "Номер": {
-      "extractionState": "manual",
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Nömrə"
-          }
-        }
-      }
-    },
     "Номер и активные резервы будут удалены без возможности восстановить. Букеты, которые вы держите, вернутся в продажу.": {
       "extractionState": "manual",
       "localizations": {
@@ -413,6 +437,28 @@
           "stringUnit": {
             "state": "translated",
             "value": "Nömrə və aktiv rezervlər bərpasız silinəcək. Saxladığınız buketlər yenidən satışa qayıdacaq."
+          }
+        }
+      }
+    },
+    "Номер не подошёл. Проверьте его и попробуйте ещё раз.": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Nömrə uyğun gəlmədi. Yoxlayıb bir daha cəhd edin."
+          }
+        }
+      }
+    },
+    "Нужен, чтобы держать букет за вами. Номер телефона можно добавить потом — он нужен только чтобы лавка могла позвонить.": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Buketi sizin adınıza saxlamaq üçün lazımdır. Telefonu sonra əlavə edə bilərsiniz — o yalnız dükanın zəng etməsi üçündür."
           }
         }
       }
@@ -499,32 +545,12 @@
         }
       }
     },
-    "Получить код": {
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Kodu göndər"
-          }
-        }
-      }
-    },
     "Понятно": {
       "localizations": {
         "az": {
           "stringUnit": {
             "state": "translated",
             "value": "Aydındır"
-          }
-        }
-      }
-    },
-    "Пришлём код в SMS — он нужен, чтобы держать резерв за вами.": {
-      "localizations": {
-        "az": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "SMS ilə kod göndərəcəyik — buketi sizin adınıza saxlamaq üçün lazımdır."
           }
         }
       }
@@ -691,6 +717,28 @@
         }
       }
     },
+    "Сохранить": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Yadda saxla"
+          }
+        }
+      }
+    },
+    "Телефон для лавки": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dükan üçün telefon"
+          }
+        }
+      }
+    },
     "Типографика": {
       "localizations": {
         "az": {
@@ -802,6 +850,17 @@
           "stringUnit": {
             "state": "translated",
             "value": "Bu buket artıq sizdədir"
+          }
+        }
+      }
+    },
+    "Этот номер уже указан в другом аккаунте.": {
+      "extractionState": "manual",
+      "localizations": {
+        "az": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Bu nömrə başqa hesabda göstərilib."
           }
         }
       }

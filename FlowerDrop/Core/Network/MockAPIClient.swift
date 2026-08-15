@@ -19,15 +19,18 @@ struct MockAPIClient: APIClient {
         return bouquet
     }
 
-    func requestCode(phone: String) async throws -> OTPChallenge {
+    func signIn(
+        provider: AuthProvider,
+        identityToken: String,
+        name: String
+    ) async throws -> AuthSession {
         try await pause()
-        return OTPChallenge(phone: phone, expiresIn: 300, debugCode: "1111")
+        return AuthSession(token: "preview-token", phone: nil, email: "", name: name)
     }
 
-    func verifyCode(phone: String, code: String) async throws -> AuthSession {
+    func updatePhone(_ phone: String, token: String) async throws -> AuthSession {
         try await pause()
-        guard code == "1111" else { throw APIError.otpInvalid }
-        return AuthSession(token: "preview-token", phone: phone)
+        return AuthSession(token: token, phone: phone.isEmpty ? nil : phone, email: "", name: "")
     }
 
     func reservations(token: String) async throws -> [Reservation] {

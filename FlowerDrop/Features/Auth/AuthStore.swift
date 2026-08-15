@@ -11,8 +11,9 @@ final class AuthStore {
     nonisolated static let countryCode = "+994"
 
     private enum Key {
-        static let phone = "auth.phoneDigits"
+        static let phone = "auth.phone"
         static let token = "auth.token"
+        static let name = "auth.name"
     }
 
     private let client: any APIClient
@@ -22,16 +23,19 @@ final class AuthStore {
     /// на показе затирал бы настоящий токен, а выход из демо — уносил его.
     private let namespace: String
 
-    private(set) var phoneDigits: String
+    /// Контакт для лавки. `nil` — человек его не указал, и это нормально.
+    private(set) var phone: String?
+    private(set) var name: String
     private(set) var token: String?
 
     var isSignedIn: Bool {
         token != nil
     }
 
-    /// Номер в человеческом виде: +994 XX XXX XX XX.
+    /// Номер в человеческом виде, или пусто, если его не давали.
     var formattedPhone: String {
-        "\(Self.countryCode) \(Self.mask(phoneDigits))"
+        guard let phone, phone.hasPrefix(Self.countryCode) else { return phone ?? "" }
+        return "\(Self.countryCode) \(Self.mask(String(phone.dropFirst(Self.countryCode.count))))"
     }
 
     init(
@@ -44,7 +48,8 @@ final class AuthStore {
         self.namespace = namespace
         self.defaults = defaults
         self.keychain = keychain
-        self.phoneDigits = defaults.string(forKey: namespace + Key.phone) ?? ""
+        self.phone = defaults.string(forKey: namespace + Key.phone)
+        self.name = defaults.string(forKey: namespace + Key.name) ?? ""
         self.token = keychain.string(for: namespace + Key.token)
     }
 
@@ -55,31 +60,47 @@ final class AuthStore {
         keychain: KeychainStore = KeychainStore()
     ) {
         defaults.removeObject(forKey: namespace + Key.phone)
+        defaults.removeObject(forKey: namespace + Key.name)
         keychain.removeValue(for: namespace + Key.token)
     }
 
-    /// Шаг 1: попросить код. Сервер сам нормализует номер.
-    @discardableResult
-    func requestCode(phoneDigits: String) async throws -> OTPChallenge {
-        let challenge = try await client.requestCode(phone: Self.countryCode + phoneDigits)
-        self.phoneDigits = phoneDigits
-        defaults.set(phoneDigits, forKey: namespace + Key.phone)
-        return challenge
+    /// Обменять identity-токен провайдера на наш. Подпись проверяет сервер:
+    /// приложение не разбирает токен и ничего в нём не решает.
+    func signIn(provider: AuthProvider, identityToken: String, name: String) async throws {
+        let session = try await client.signIn(
+            provider: provider,
+            identityToken: identityToken,
+            name: name
+        )
+        apply(session)
     }
 
-    /// Шаг 2: обменять код на токен.
-    func verify(code: String) async throws {
-        let session = try await client.verifyCode(
-            phone: Self.countryCode + phoneDigits,
-            code: code
-        )
+    /// Телефон как контакт: пустая строка стирает его.
+    func updatePhone(_ value: String) async throws {
+        guard let token else { throw APIError.notAuthenticated }
+        apply(try await client.updatePhone(value, token: token))
+    }
+
+    private func apply(_ session: AuthSession) {
         token = session.token
+        phone = session.phone
+        name = session.name
         keychain.set(session.token, for: namespace + Key.token)
+        if let phone = session.phone {
+            defaults.set(phone, forKey: namespace + Key.phone)
+        } else {
+            defaults.removeObject(forKey: namespace + Key.phone)
+        }
+        defaults.set(session.name, forKey: namespace + Key.name)
     }
 
     func signOut() {
         token = nil
+        phone = nil
+        name = ""
         keychain.removeValue(for: namespace + Key.token)
+        defaults.removeObject(forKey: namespace + Key.phone)
+        defaults.removeObject(forKey: namespace + Key.name)
     }
 
     /// Маска ввода: XX XXX XX XX.

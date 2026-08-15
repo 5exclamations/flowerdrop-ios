@@ -153,6 +153,8 @@ enum DS {
         static let thumbnail: CGFloat = 64
         /// Знак на экране знакомства.
         static let onboardingMark: CGFloat = 96
+        /// Знак провайдера на кнопке входа.
+        static let providerMark: CGFloat = 20
     }
 
     // MARK: - Формат

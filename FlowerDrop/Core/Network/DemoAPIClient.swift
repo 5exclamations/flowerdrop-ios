@@ -11,8 +11,6 @@ import Foundation
 /// меняется из разных задач.
 actor DemoAPIClient: APIClient {
 
-    /// Единственный код входа в демо — тот же, что в dev-сборке бэкенда.
-    private static let otpCode = "1111"
     private static let token = "demo-token"
     /// Резерв держится два часа, но не дольше, чем открыта лавка.
     private static let reservationTTL: TimeInterval = 2 * 60 * 60
@@ -23,6 +21,8 @@ actor DemoAPIClient: APIClient {
     private var catalogue: [Bouquet]
     private var reservations: [Reservation] = []
     private var nextReservationID = 1
+    private var phone: String?
+    private var name = "Гость"
 
     init(catalogue: [Bouquet] = DemoCatalogue.bouquets) {
         self.catalogue = catalogue
@@ -45,15 +45,29 @@ actor DemoAPIClient: APIClient {
 
     // MARK: - Вход
 
-    func requestCode(phone: String) async throws -> OTPChallenge {
+    /// На показе вход не ходит к Apple и Google: их сессии требуют сети и
+    /// живого аккаунта, а демо обязано работать в самолёте. Экран входа
+    /// отдаёт сюда любой токен, и мы его принимаем — подделывается ровно
+    /// внешний шаг, всё остальное после входа настоящее.
+    func signIn(
+        provider: AuthProvider,
+        identityToken: String,
+        name: String
+    ) async throws -> AuthSession {
         try await pause()
-        return OTPChallenge(phone: phone, expiresIn: 300, debugCode: Self.otpCode)
+        self.name = name.isEmpty ? self.name : name
+        return session
     }
 
-    func verifyCode(phone: String, code: String) async throws -> AuthSession {
+    func updatePhone(_ phone: String, token: String) async throws -> AuthSession {
         try await pause()
-        guard code == Self.otpCode else { throw APIError.otpInvalid }
-        return AuthSession(token: Self.token, phone: phone)
+        try check(token)
+        self.phone = phone.isEmpty ? nil : phone
+        return session
+    }
+
+    private var session: AuthSession {
+        AuthSession(token: Self.token, phone: phone, email: "demo@flowerdrop.az", name: name)
     }
 
     // MARK: - Резервы

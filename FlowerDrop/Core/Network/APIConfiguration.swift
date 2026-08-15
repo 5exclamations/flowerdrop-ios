@@ -14,3 +14,16 @@ enum APIConfiguration {
         return url
     }
 }
+
+
+/// Прочие значения из Info.plist. Отдельно от адреса бэкенда, потому что
+/// это настройки не сети, а входа.
+enum AppConfiguration {
+    /// Client ID из Google Cloud Console. Не секрет: он зашит в приложение
+    /// по замыслу OAuth для публичных клиентов, а тайну бережёт PKCE.
+    /// `nil` означает «Google-вход не настроен» — кнопка не показывается.
+    static var googleClientID: String? {
+        let value = Bundle.main.object(forInfoDictionaryKey: "GoogleClientID") as? String
+        return (value?.isEmpty == false) ? value : nil
+    }
+}
