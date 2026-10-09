@@ -2,6 +2,13 @@
 
 [![CI](https://github.com/5exclamations/flowerdrop-ios/actions/workflows/ci.yml/badge.svg)](https://github.com/5exclamations/flowerdrop-ios/actions/workflows/ci.yml)
 
+> **English summary.** Native SwiftUI client (iOS 17+) for FlowerDrop, a marketplace where Baku flower shops sell
+> the day's remaining bouquets at 50% off for same-evening pickup. MVVM with `@Observable` and async/await, no
+> third-party dependencies, Sign in with Apple and Google (identity tokens verified by the
+> [Django backend](https://github.com/5exclamations/flowerdrop-backend)), session token in Keychain, Russian and
+> Azerbaijani localization, dark mode and an in-house design system. Built with XcodeGen; CI builds the app on
+> GitHub Actions. The rest of this README is in Russian.
+
 Маркетплейс «вчерашних» букетов со скидкой −50%. Лавки Баку выкладывают то, что
 осталось к вечеру; покупатель резервирует букет с телефона и забирает его до
 закрытия. Это клиент; сервер живёт в отдельной репе —
@@ -26,7 +33,7 @@
   адрес, время до закрытия и остаток.
 - **Резерв в два тапа.** Sheet со сводкой (сумма, до скольки забрать, адрес),
   затем экран с кодом получения — его называют в лавке.
-- **Вход по номеру.** `+994`, код из SMS в четыре ячейки, токен в Keychain.
+- **Вход через Apple или Google.** Токен провайдера проверяет бэкенд, сессионный токен — в Keychain.
   Логин запрашивается только в момент резерва, а не на старте.
 - **Мои резервы.** Активные с обратным отсчётом до истечения, просроченные и
   уже полученные; кнопка «Забрал».
@@ -66,8 +73,6 @@ docker compose up --build
 docker compose exec web python manage.py seed_demo
 ```
 
-Код из SMS в dev-режиме всегда `1111`.
-
 Чтобы посмотреть приложение в азербайджанской локали, не трогая настройки
 симулятора:
 
@@ -87,7 +92,7 @@ FlowerDrop/
     Onboarding/      экран знакомства, показывается один раз
     Feed/            лента, карточка, фото-оверлеи
     BouquetDetail/   экран букета
-    Auth/            телефон, код, стор авторизации
+    Auth/            вход через Apple и Google, стор авторизации
     Reservation/     подтверждение, успех, мои резервы
   Resources/         Assets.xcassets, Localizable.xcstrings
 ```
